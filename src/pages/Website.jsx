@@ -19,6 +19,7 @@ function OnboardingSetup() {
   const [tagline, setTagline] = useState('')
   const [category, setCategory] = useState('')
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const id = lang === 'id'
 
@@ -28,12 +29,25 @@ function OnboardingSetup() {
 
   const handleCreate = async () => {
     setLoading(true)
-    await supabase
-      .from('profiles')
-      .update({ onboarded: true })
-      .eq('id', user.id)
-    await fetchProfile(user.id)
-    navigate('/')
+    setError('')
+    try {
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .update({ onboarded: true, category, tagline })
+        .eq('id', user.id)
+
+      if (dbError) {
+        setError(id ? 'Gagal menyimpan. Coba lagi.' : 'Failed to save. Please try again.')
+        setLoading(false)
+        return
+      }
+
+      await fetchProfile(user.id)
+      navigate('/')
+    } catch (err) {
+      setError(id ? 'Terjadi kesalahan. Coba lagi.' : 'An error occurred. Please try again.')
+      setLoading(false)
+    }
   }
 
   const features = id
@@ -127,6 +141,12 @@ function OnboardingSetup() {
             <div className="onboarding-char">{tagline.length}/80</div>
           </div>
         </div>
+
+        {error && (
+          <div style={{ padding: '10px 13px', borderRadius: 9, fontSize: 13, background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)', color: '#f87171', marginBottom: 4 }}>
+            {error}
+          </div>
+        )}
 
         <button
           className="onboarding-btn"

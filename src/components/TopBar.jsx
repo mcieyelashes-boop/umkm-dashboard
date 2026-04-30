@@ -1,17 +1,9 @@
 import { Search, Bell, Wallet as WalletIcon, Plus, Sun, Moon, LogOut } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
+import { formatRupiah } from '../utils/currency.js'
+import { getInitials } from '../utils/string.js'
 import './TopBar.css'
-
-const formatRupiah = (n) => 'Rp ' + (n ?? 0).toLocaleString('id-ID')
-
-function getInitials(name) {
-  if (!name) return '?'
-  const parts = name.trim().split(/\s+/)
-  return parts.length >= 2
-    ? (parts[0][0] + parts[1][0]).toUpperCase()
-    : parts[0].slice(0, 2).toUpperCase()
-}
 
 export default function TopBar() {
   const { theme, toggleTheme, lang, toggleLang, t, profile, signOut } = useApp()

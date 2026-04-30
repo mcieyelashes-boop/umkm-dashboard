@@ -27,35 +27,39 @@ export default function Auth() {
     setSuccess('')
     setLoading(true)
 
-    if (mode === 'login') {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: form.email,
-        password: form.password,
-      })
-      if (error) setError(error.message)
-    } else {
-      if (!form.business_name || !form.owner_name) {
-        setError(lang === 'id' ? 'Nama bisnis dan pemilik wajib diisi' : 'Business name and owner name are required')
-        setLoading(false)
-        return
-      }
-      const { error } = await supabase.auth.signUp({
-        email: form.email,
-        password: form.password,
-        options: {
-          data: {
-            owner_name: form.owner_name,
-            business_name: form.business_name,
-          }
+    try {
+      if (mode === 'login') {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: form.email,
+          password: form.password,
+        })
+        if (error) setError(error.message)
+      } else {
+        if (!form.business_name || !form.owner_name) {
+          setError(lang === 'id' ? 'Nama bisnis dan pemilik wajib diisi' : 'Business name and owner name are required')
+          return
         }
-      })
-      if (error) setError(error.message)
-      else setSuccess(lang === 'id'
-        ? 'Akun berhasil dibuat! Cek email untuk verifikasi.'
-        : 'Account created! Check your email to verify.'
-      )
+        const { error } = await supabase.auth.signUp({
+          email: form.email,
+          password: form.password,
+          options: {
+            data: {
+              owner_name: form.owner_name,
+              business_name: form.business_name,
+            }
+          }
+        })
+        if (error) setError(error.message)
+        else setSuccess(lang === 'id'
+          ? 'Akun berhasil dibuat! Cek email untuk verifikasi.'
+          : 'Account created! Check your email to verify.'
+        )
+      }
+    } catch (err) {
+      setError(lang === 'id' ? 'Terjadi kesalahan. Coba lagi.' : 'An unexpected error occurred. Please try again.')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   const isLogin = mode === 'login'

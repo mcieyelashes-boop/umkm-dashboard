@@ -23,30 +23,33 @@ export function AppProvider({ children }) {
     localStorage.setItem('umkm-lang', lang)
   }, [lang])
 
-  // Auth listener
+  // Auth listener — single source of truth, no double fetchProfile on startup
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
-      else setAuthLoading(false)
-    })
-
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
-      else { setProfile(null); setAuthLoading(false) }
+      if (session?.user) {
+        fetchProfile(session.user.id)
+      } else {
+        setProfile(null)
+        setAuthLoading(false)
+      }
     })
-
     return () => subscription.unsubscribe()
   }, [])
 
   async function fetchProfile(userId) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', userId)
       .single()
-    setProfile(data)
+
+    // PGRST116 = "no rows returned" — expected for brand-new users
+    if (error && error.code !== 'PGRST116') {
+      console.error('[fetchProfile] error:', error.message)
+    }
+
+    setProfile(data ?? null)
     setAuthLoading(false)
   }
 
@@ -54,7 +57,8 @@ export function AppProvider({ children }) {
   const toggleLang = () => setLang(prev => prev === 'id' ? 'en' : 'id')
 
   const signOut = async () => {
-    await supabase.auth.signOut()
+    const { error } = await supabase.auth.signOut()
+    if (error) console.error('[signOut] error:', error.message)
     setUser(null)
     setProfile(null)
   }

@@ -126,6 +126,7 @@
 
 .stat-change.up { color: var(--accent-emerald); }
 .stat-change.down { color: var(--accent-red); }
+.stat-change.neutral { color: var(--text-tertiary); }
 .stat-change span {
   color: var(--text-tertiary);
   font-weight: 400;

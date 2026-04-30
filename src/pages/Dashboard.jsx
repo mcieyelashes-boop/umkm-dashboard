@@ -1,6 +1,6 @@
 import {
-  ArrowUpRight, Wallet, ShoppingBag, Globe, Heart,
-  Eye, Zap, MessageSquare, Sparkles, TrendingUp, Package,
+  Minus, Wallet, ShoppingBag, Globe, Heart,
+  Eye, Zap, MessageSquare, Sparkles, TrendingUp,
   ShoppingCart
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
@@ -8,14 +8,8 @@ import {
   AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts'
 import { useApp } from '../context/AppContext.jsx'
+import { formatRupiah, formatCompact } from '../utils/currency.js'
 import './Dashboard.css'
-
-const formatRupiah = (n) => 'Rp ' + (n ?? 0).toLocaleString('id-ID')
-const formatCompact = (n) => {
-  if (n >= 1000000) return 'Rp ' + (n / 1000000).toFixed(1) + 'jt'
-  if (n >= 1000) return 'Rp ' + (n / 1000).toFixed(0) + 'rb'
-  return 'Rp ' + n
-}
 
 const iconMap = { wallet: Wallet, shopping: ShoppingBag, globe: Globe, heart: Heart }
 
@@ -76,8 +70,8 @@ export default function Dashboard() {
               <div className="stat-content">
                 <div className="stat-label">{stat.label}</div>
                 <div className="stat-value">{stat.value}</div>
-                <div className="stat-change up">
-                  <ArrowUpRight size={12} />
+                <div className="stat-change neutral">
+                  <Minus size={12} />
                   {stat.change} <span>{d.vsLastMonth}</span>
                 </div>
               </div>

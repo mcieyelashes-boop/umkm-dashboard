@@ -53,7 +53,24 @@ function ProtectedRoute({ children }) {
 
 function PublicRoute({ children }) {
   const { user, authLoading } = useApp()
-  if (authLoading) return null
+  if (authLoading) return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      background: 'var(--bg-primary)',
+    }}>
+      <div style={{
+        width: 20, height: 20,
+        border: '2px solid rgba(124,58,237,0.3)',
+        borderTopColor: '#7c3aed',
+        borderRadius: '50%',
+        animation: 'spin 0.7s linear infinite',
+      }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  )
   if (user) return <Navigate to="/" replace />
   return children
 }

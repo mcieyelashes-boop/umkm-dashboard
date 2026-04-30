@@ -4,15 +4,8 @@ import {
   CreditCard, Wallet, Sparkles, Settings, Zap
 } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
+import { getInitials } from '../utils/string.js'
 import './Sidebar.css'
-
-function getInitials(name) {
-  if (!name) return '?'
-  const parts = name.trim().split(/\s+/)
-  return parts.length >= 2
-    ? (parts[0][0] + parts[1][0]).toUpperCase()
-    : parts[0].slice(0, 2).toUpperCase()
-}
 
 export default function Sidebar() {
   const { t, profile } = useApp()
@@ -40,7 +33,7 @@ export default function Sidebar() {
         </div>
         <div className="brand-text">
           <div className="brand-name">UMKM Hub</div>
-          <div className="brand-tagline">Business Pro</div>
+          <div className="brand-tagline">{plan}</div>
         </div>
       </div>
 
