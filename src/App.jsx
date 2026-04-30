@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
 import Layout from './components/Layout.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Website from './pages/Website.jsx'
@@ -13,7 +13,8 @@ import Auth from './pages/Auth.jsx'
 import { useApp } from './context/AppContext.jsx'
 
 function ProtectedRoute({ children }) {
-  const { user, authLoading } = useApp()
+  const { user, authLoading, profile } = useApp()
+  const location = useLocation()
 
   if (authLoading) {
     return (
@@ -41,6 +42,12 @@ function ProtectedRoute({ children }) {
   }
 
   if (!user) return <Navigate to="/auth" replace />
+
+  // New user: redirect to website onboarding (allow /website and /settings through)
+  if (profile && !profile.onboarded && location.pathname !== '/website' && location.pathname !== '/settings') {
+    return <Navigate to="/website" replace />
+  }
+
   return children
 }
 

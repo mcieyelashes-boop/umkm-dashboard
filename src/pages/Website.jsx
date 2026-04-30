@@ -1,15 +1,158 @@
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import {
   Globe, Plus, Eye, MousePointer, Zap, ExternalLink,
-  Edit3, BarChart3, Search
+  Edit3, BarChart3, Search, Sparkles, ArrowRight,
+  CheckCircle2, Layout, ShoppingBag, MessageSquare
 } from 'lucide-react'
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { websitePages, websiteAnalytics } from '../data/mockData.js'
 import { useApp } from '../context/AppContext.jsx'
+import { supabase } from '../lib/supabase.js'
 import './shared.css'
 import './Website.css'
 
+/* ── Onboarding wizard for new users ─────────────────────────── */
+function OnboardingSetup() {
+  const { profile, fetchProfile, user, lang } = useApp()
+  const navigate = useNavigate()
+  const [tagline, setTagline] = useState('')
+  const [category, setCategory] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const id = lang === 'id'
+
+  const categories = id
+    ? ['Fashion & Pakaian', 'Makanan & Minuman', 'Kecantikan & Perawatan', 'Elektronik', 'Kerajinan Tangan', 'Kesehatan', 'Perlengkapan Rumah', 'Lainnya']
+    : ['Fashion & Apparel', 'Food & Beverage', 'Beauty & Care', 'Electronics', 'Handcraft', 'Health', 'Home Goods', 'Other']
+
+  const handleCreate = async () => {
+    setLoading(true)
+    await supabase
+      .from('profiles')
+      .update({ onboarded: true })
+      .eq('id', user.id)
+    await fetchProfile(user.id)
+    navigate('/')
+  }
+
+  const features = id
+    ? [
+        { icon: Layout, text: 'Landing page profesional otomatis dibuat' },
+        { icon: ShoppingBag, text: 'Terhubung ke toko online kamu' },
+        { icon: Sparkles, text: 'AI siap bantu buat konten bisnis' },
+        { icon: MessageSquare, text: 'Chat customer terpusat di satu tempat' },
+      ]
+    : [
+        { icon: Layout, text: 'Professional landing page created automatically' },
+        { icon: ShoppingBag, text: 'Connected to your online store' },
+        { icon: Sparkles, text: 'AI ready to help create business content' },
+        { icon: MessageSquare, text: 'Centralized customer chat in one place' },
+      ]
+
+  return (
+    <div className="onboarding-wrap">
+      <div className="onboarding-left">
+        <div className="onboarding-badge">
+          <Sparkles size={14} />
+          {id ? 'Setup Awal' : 'Initial Setup'}
+        </div>
+        <h1 className="onboarding-title">
+          {id ? `Halo, ${profile?.owner_name?.split(' ')[0] || 'Kawan'}! 👋` : `Hey, ${profile?.owner_name?.split(' ')[0] || 'there'}! 👋`}
+        </h1>
+        <p className="onboarding-subtitle">
+          {id
+            ? 'Kamu selangkah lagi dari memiliki landing page bisnis yang profesional. Yuk, setup sekarang!'
+            : "You're one step away from having a professional business landing page. Let's set it up now!"}
+        </p>
+
+        <div className="onboarding-features">
+          {features.map(({ icon: Icon, text }) => (
+            <div key={text} className="onboarding-feature">
+              <div className="onboarding-feature-icon"><Icon size={16} /></div>
+              <span>{text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="onboarding-card glass">
+        <div className="onboarding-card-header">
+          <div className="onboarding-card-icon"><Globe size={20} /></div>
+          <div>
+            <div className="onboarding-card-title">
+              {id ? 'Buat Landing Page' : 'Create Landing Page'}
+            </div>
+            <div className="onboarding-card-sub">
+              {id ? 'Untuk bisnis kamu' : 'For your business'}
+            </div>
+          </div>
+        </div>
+
+        <div className="onboarding-form">
+          {/* Business name — read-only, comes from profile */}
+          <div className="onboarding-field">
+            <label>{id ? 'Nama Bisnis' : 'Business Name'}</label>
+            <div className="onboarding-input-readonly">
+              <Globe size={14} />
+              <span>{profile?.business_name || '—'}</span>
+              <CheckCircle2 size={14} className="check-icon" />
+            </div>
+          </div>
+
+          {/* Category */}
+          <div className="onboarding-field">
+            <label>{id ? 'Kategori Bisnis' : 'Business Category'}</label>
+            <select
+              className="onboarding-select"
+              value={category}
+              onChange={e => setCategory(e.target.value)}
+            >
+              <option value="">{id ? '— Pilih kategori —' : '— Select category —'}</option>
+              {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+
+          {/* Tagline */}
+          <div className="onboarding-field">
+            <label>{id ? 'Tagline / Deskripsi Singkat' : 'Tagline / Short Description'}</label>
+            <input
+              type="text"
+              className="onboarding-input"
+              placeholder={id ? 'Contoh: Produk batik premium pilihan keluarga Indonesia' : 'e.g. Premium products for every Indonesian family'}
+              value={tagline}
+              onChange={e => setTagline(e.target.value)}
+              maxLength={80}
+            />
+            <div className="onboarding-char">{tagline.length}/80</div>
+          </div>
+        </div>
+
+        <button
+          className="onboarding-btn"
+          onClick={handleCreate}
+          disabled={loading}
+        >
+          {loading
+            ? (id ? 'Membuat...' : 'Creating...')
+            : (id ? 'Buat Landing Page Sekarang' : 'Create Landing Page Now')
+          }
+          {!loading && <ArrowRight size={16} />}
+        </button>
+
+        <p className="onboarding-note">
+          {id
+            ? 'Kamu bisa edit kapan saja setelah ini dari menu Website.'
+            : 'You can edit anytime later from the Website menu.'}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+/* ── Main Website page ───────────────────────────────────────── */
 export default function Website() {
-  const { t, theme } = useApp()
+  const { t, theme, profile } = useApp()
   const w = t.website
 
   const tooltipStyle = {
@@ -18,6 +161,14 @@ export default function Website() {
     borderRadius: 12,
     fontSize: 12,
     color: theme === 'dark' ? '#f1f5f9' : '#0f172a',
+  }
+
+  if (!profile?.onboarded) {
+    return (
+      <div className="page">
+        <OnboardingSetup />
+      </div>
+    )
   }
 
   return (
@@ -37,7 +188,7 @@ export default function Website() {
         <div className="website-hero-info">
           <div className="domain-row">
             <Globe size={16} />
-            <span className="domain">tokoberkahjaya.com</span>
+            <span className="domain">{profile?.business_name?.toLowerCase().replace(/\s+/g, '') || 'tokoanda'}.umkmhub.id</span>
             <span className="badge badge-success">Live</span>
             <ExternalLink size={12} className="ext-link" />
           </div>
@@ -64,11 +215,11 @@ export default function Website() {
               <span className="dot red" />
               <span className="dot amber" />
               <span className="dot emerald" />
-              <span className="url-bar">tokoberkahjaya.com</span>
+              <span className="url-bar">{profile?.business_name?.toLowerCase().replace(/\s+/g, '') || 'tokoanda'}.umkmhub.id</span>
             </div>
             <div className="browser-content">
-              <div className="mock-hero gradient-text">Toko Berkah Jaya</div>
-              <div className="mock-sub">Premium UMKM Store</div>
+              <div className="mock-hero gradient-text">{profile?.business_name || 'Toko Anda'}</div>
+              <div className="mock-sub">{profile?.plan || 'Starter'} Plan</div>
               <div className="mock-grid">
                 <div className="mock-card" style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }} />
                 <div className="mock-card" style={{ background: 'linear-gradient(135deg, #ec4899, #f59e0b)' }} />
@@ -82,23 +233,23 @@ export default function Website() {
       <div className="kpi-grid">
         <div className="kpi glass">
           <div className="kpi-label">{w.todayVisitors}</div>
-          <div className="kpi-value">2,148</div>
-          <div className="kpi-meta up">{w.fromYesterday}</div>
+          <div className="kpi-value">0</div>
+          <div className="kpi-meta">—</div>
         </div>
         <div className="kpi glass">
           <div className="kpi-label">{w.bounceRate}</div>
-          <div className="kpi-value">32.4%</div>
-          <div className="kpi-meta up">{w.betterBounce}</div>
+          <div className="kpi-value">—</div>
+          <div className="kpi-meta">—</div>
         </div>
         <div className="kpi glass">
           <div className="kpi-label">{w.avgSession}</div>
-          <div className="kpi-value">3:42</div>
-          <div className="kpi-meta up">{w.longerSession}</div>
+          <div className="kpi-value">—</div>
+          <div className="kpi-meta">—</div>
         </div>
         <div className="kpi glass">
           <div className="kpi-label">{w.conversion}</div>
-          <div className="kpi-value">4.8%</div>
-          <div className="kpi-meta up">+0.6%</div>
+          <div className="kpi-value">—</div>
+          <div className="kpi-meta">—</div>
         </div>
       </div>
 
