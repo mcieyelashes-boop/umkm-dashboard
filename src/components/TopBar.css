@@ -207,8 +207,10 @@
   animation: pulse 2s infinite;
 }
 
-.topbar-profile {
-  cursor: pointer;
+.topbar-profile-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .topbar-avatar {
@@ -223,6 +225,17 @@
   font-size: 13px;
   color: #fff;
   border: 2px solid var(--bg-primary);
+}
+
+.signout-btn {
+  color: var(--text-tertiary);
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.signout-btn:hover {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.4);
+  background: rgba(248, 113, 113, 0.06);
 }
 
 @media (max-width: 768px) {

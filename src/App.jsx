@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import Website from './pages/Website.jsx'
@@ -9,11 +9,62 @@ import Payment from './pages/Payment.jsx'
 import Wallet from './pages/Wallet.jsx'
 import ContentStudio from './pages/ContentStudio.jsx'
 import Settings from './pages/Settings.jsx'
+import Auth from './pages/Auth.jsx'
+import { useApp } from './context/AppContext.jsx'
+
+function ProtectedRoute({ children }) {
+  const { user, authLoading } = useApp()
+
+  if (authLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: 'var(--bg-primary)',
+        color: 'var(--text-secondary)',
+        fontSize: '14px',
+        gap: '10px',
+      }}>
+        <div style={{
+          width: 20, height: 20,
+          border: '2px solid var(--border)',
+          borderTopColor: 'var(--accent)',
+          borderRadius: '50%',
+          animation: 'spin 0.7s linear infinite',
+        }} />
+        Loading...
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    )
+  }
+
+  if (!user) return <Navigate to="/auth" replace />
+  return children
+}
+
+function PublicRoute({ children }) {
+  const { user, authLoading } = useApp()
+  if (authLoading) return null
+  if (user) return <Navigate to="/" replace />
+  return children
+}
 
 export default function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
+      <Route path="/auth" element={
+        <PublicRoute>
+          <Auth />
+        </PublicRoute>
+      } />
+
+      <Route element={
+        <ProtectedRoute>
+          <Layout />
+        </ProtectedRoute>
+      }>
         <Route path="/" element={<Dashboard />} />
         <Route path="/website" element={<Website />} />
         <Route path="/ecommerce" element={<Ecommerce />} />
@@ -24,6 +75,8 @@ export default function App() {
         <Route path="/studio" element={<ContentStudio />} />
         <Route path="/settings" element={<Settings />} />
       </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

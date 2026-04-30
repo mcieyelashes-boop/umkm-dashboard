@@ -3,12 +3,23 @@ import {
   LayoutDashboard, Globe, ShoppingBag, Share2, MessageSquare,
   CreditCard, Wallet, Sparkles, Settings, Zap
 } from 'lucide-react'
-import { businessProfile } from '../data/mockData.js'
 import { useApp } from '../context/AppContext.jsx'
 import './Sidebar.css'
 
+function getInitials(name) {
+  if (!name) return '?'
+  const parts = name.trim().split(/\s+/)
+  return parts.length >= 2
+    ? (parts[0][0] + parts[1][0]).toUpperCase()
+    : parts[0].slice(0, 2).toUpperCase()
+}
+
 export default function Sidebar() {
-  const { t } = useApp()
+  const { t, profile } = useApp()
+
+  const businessName = profile?.business_name || 'UMKM Hub'
+  const plan = profile?.plan || 'Starter'
+  const avatarText = profile?.avatar || getInitials(profile?.owner_name || businessName)
 
   const menuItems = [
     { path: '/', icon: LayoutDashboard, labelKey: 'dashboard', badge: null },
@@ -60,10 +71,10 @@ export default function Sidebar() {
       </nav>
 
       <div className="sidebar-profile">
-        <div className="profile-avatar">{businessProfile.avatar}</div>
+        <div className="profile-avatar">{avatarText}</div>
         <div className="profile-info">
-          <div className="profile-name">{businessProfile.name}</div>
-          <div className="profile-plan">{businessProfile.plan}</div>
+          <div className="profile-name">{businessName}</div>
+          <div className="profile-plan">{plan}</div>
         </div>
       </div>
     </aside>
