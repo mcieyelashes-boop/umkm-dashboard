@@ -50,6 +50,17 @@ function OnboardingSetup() {
     }
   }
 
+  const handleSkip = async () => {
+    setLoading(true)
+    try {
+      await supabase.from('profiles').update({ onboarded: true }).eq('id', user.id)
+      await fetchProfile(user.id)
+      navigate('/')
+    } catch {
+      setLoading(false)
+    }
+  }
+
   const features = id
     ? [
         { icon: Layout, text: 'Landing page profesional otomatis dibuat' },
@@ -165,6 +176,14 @@ function OnboardingSetup() {
             ? 'Kamu bisa edit kapan saja setelah ini dari menu Website.'
             : 'You can edit anytime later from the Website menu.'}
         </p>
+
+        <button
+          className="onboarding-skip-btn"
+          onClick={handleSkip}
+          disabled={loading}
+        >
+          {id ? 'Lewati untuk sekarang' : 'Skip for now'}
+        </button>
       </div>
     </div>
   )

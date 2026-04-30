@@ -1,4 +1,4 @@
-.social-accounts {
+﻿.social-accounts {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 14px;
@@ -80,7 +80,7 @@
 }
 
 .ss-label {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -112,7 +112,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: rgba(15, 20, 36, 0.4);
+  background: var(--bg-input-subtle);
   border: 1px solid var(--border);
   border-radius: 12px;
 }
@@ -238,7 +238,7 @@
 }
 
 .post-card {
-  background: rgba(15, 20, 36, 0.4);
+  background: var(--bg-input-subtle);
   border: 1px solid var(--border);
   border-radius: 12px;
   overflow: hidden;

@@ -1,4 +1,4 @@
-.payment-summary {
+﻿.payment-summary {
   display: grid;
   grid-template-columns: 1.5fr auto 1fr;
   gap: 24px;
@@ -99,7 +99,7 @@
   width: 36px;
   height: 36px;
   border-radius: 10px;
-  background: rgba(15, 20, 36, 0.5);
+  background: var(--bg-input);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -149,7 +149,7 @@
 }
 
 .ms-label {
-  font-size: 9px;
+  font-size: 11px;
   color: var(--text-tertiary);
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -201,7 +201,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 10px 12px;
-  background: rgba(15, 20, 36, 0.4);
+  background: var(--bg-input-subtle);
   border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 12px;

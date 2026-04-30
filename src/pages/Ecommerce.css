@@ -1,4 +1,4 @@
-.ec-grid {
+﻿.ec-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 16px;
@@ -11,7 +11,7 @@
 }
 
 .product-card {
-  background: rgba(15, 20, 36, 0.5);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
@@ -131,7 +131,7 @@
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background: rgba(15, 20, 36, 0.4);
+  background: var(--bg-input-subtle);
   border: 1px solid var(--border);
   border-radius: 12px;
 }

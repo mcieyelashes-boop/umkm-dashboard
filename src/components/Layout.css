@@ -19,11 +19,40 @@
   overflow-x: hidden;
 }
 
+/* Mobile backdrop */
+.sidebar-backdrop {
+  display: none;
+}
+
 @media (max-width: 1024px) {
   .layout-main {
     margin-left: 80px;
   }
   .layout-content {
     padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .layout-main {
+    margin-left: 0;
+  }
+  .layout-content {
+    padding: 16px;
+  }
+
+  .sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 99;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
   }
 }

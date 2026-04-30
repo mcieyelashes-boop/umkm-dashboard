@@ -1,13 +1,13 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Globe, ShoppingBag, Share2, MessageSquare,
-  CreditCard, Wallet, Sparkles, Settings, Zap
+  CreditCard, Wallet, Sparkles, Settings, Zap, X
 } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { getInitials } from '../utils/string.js'
 import './Sidebar.css'
 
-export default function Sidebar() {
+export default function Sidebar({ open, onClose }) {
   const { t, profile } = useApp()
 
   const businessName = profile?.business_name || 'UMKM Hub'
@@ -17,16 +17,21 @@ export default function Sidebar() {
   const menuItems = [
     { path: '/', icon: LayoutDashboard, labelKey: 'dashboard', badge: null },
     { path: '/website', icon: Globe, labelKey: 'website', badge: null },
-    { path: '/ecommerce', icon: ShoppingBag, labelKey: 'ecommerce', badge: '12' },
+    { path: '/ecommerce', icon: ShoppingBag, labelKey: 'ecommerce', badge: null },
     { path: '/social', icon: Share2, labelKey: 'social', badge: null },
-    { path: '/chat', icon: MessageSquare, labelKey: 'chat', badge: '6' },
+    { path: '/chat', icon: MessageSquare, labelKey: 'chat', badge: null },
     { path: '/payment', icon: CreditCard, labelKey: 'payment', badge: null },
     { path: '/wallet', icon: Wallet, labelKey: 'wallet', badge: null },
     { path: '/studio', icon: Sparkles, labelKey: 'studio', badge: 'AI' },
   ]
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar${open ? ' sidebar-mobile-open' : ''}`}>
+      {/* Mobile close button */}
+      <button className="sidebar-close-btn" onClick={onClose} aria-label="Close menu">
+        <X size={18} />
+      </button>
+
       <div className="sidebar-brand">
         <div className="brand-logo">
           <Zap size={20} fill="white" />
@@ -45,6 +50,7 @@ export default function Sidebar() {
             to={item.path}
             end={item.path === '/'}
             className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+            onClick={onClose}
           >
             <item.icon size={18} />
             <span className="nav-label">{t.nav[item.labelKey]}</span>
@@ -57,7 +63,11 @@ export default function Sidebar() {
         ))}
 
         <div className="nav-section-label" style={{ marginTop: 24 }}>{t.nav.account}</div>
-        <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+        <NavLink
+          to="/settings"
+          className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+          onClick={onClose}
+        >
           <Settings size={18} />
           <span className="nav-label">{t.nav.settings}</span>
         </NavLink>

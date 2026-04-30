@@ -1,4 +1,4 @@
-.ai-tag {
+﻿.ai-tag {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -69,7 +69,7 @@
   align-items: center;
   gap: 6px;
   padding: 8px 14px;
-  background: rgba(15, 20, 36, 0.5);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 12px;
@@ -117,7 +117,7 @@
 
 .form-textarea {
   padding: 12px 14px;
-  background: rgba(15, 20, 36, 0.5);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 13px;
@@ -129,7 +129,7 @@
 
 .form-textarea:focus {
   border-color: var(--accent-primary);
-  background: rgba(15, 20, 36, 0.8);
+  background: var(--bg-input-strong);
 }
 
 .pill-group {
@@ -140,7 +140,7 @@
 
 .pill {
   padding: 7px 12px;
-  background: rgba(15, 20, 36, 0.5);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 11px;
@@ -167,7 +167,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 16px;
-  background: rgba(15, 20, 36, 0.5);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 12px;
   margin-top: 4px;
@@ -242,7 +242,7 @@
   min-height: 380px;
   border: 1.5px dashed rgba(99, 102, 241, 0.3);
   border-radius: 16px;
-  background: rgba(15, 20, 36, 0.4);
+  background: var(--bg-input-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -311,7 +311,7 @@
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 700;
   padding: 3px 7px;
   background: var(--gradient-amber);

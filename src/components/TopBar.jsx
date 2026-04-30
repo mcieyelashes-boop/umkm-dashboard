@@ -1,11 +1,11 @@
-import { Search, Bell, Wallet as WalletIcon, Plus, Sun, Moon, LogOut } from 'lucide-react'
+import { Search, Bell, Wallet as WalletIcon, Plus, Sun, Moon, LogOut, Menu } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import { formatRupiah } from '../utils/currency.js'
 import { getInitials } from '../utils/string.js'
 import './TopBar.css'
 
-export default function TopBar() {
+export default function TopBar({ onMenuClick }) {
   const { theme, toggleTheme, lang, toggleLang, t, profile, signOut } = useApp()
 
   const walletBalance = profile?.wallet_balance ?? 0
@@ -13,6 +13,11 @@ export default function TopBar() {
 
   return (
     <header className="topbar">
+      {/* Mobile hamburger */}
+      <button className="topbar-hamburger" onClick={onMenuClick} aria-label="Open menu">
+        <Menu size={20} />
+      </button>
+
       <div className="topbar-search">
         <Search size={16} />
         <input placeholder={t.topbar.search} />

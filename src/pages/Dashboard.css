@@ -1,4 +1,4 @@
-.dashboard {
+﻿.dashboard {
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -180,7 +180,7 @@
 .chart-tabs {
   display: flex;
   gap: 4px;
-  background: rgba(15, 20, 36, 0.6);
+  background: var(--bg-input-dark);
   padding: 4px;
   border-radius: 8px;
   border: 1px solid var(--border);
@@ -221,7 +221,7 @@
 .channel-dot {
   width: 8px;
   height: 8px;
-  border-radius: 2px;
+  border-radius: 50%;
 }
 
 .channel-name {
@@ -344,7 +344,7 @@
   align-items: center;
   gap: 10px;
   padding: 12px;
-  background: rgba(15, 20, 36, 0.5);
+  background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 12px;
   transition: all 0.2s;
