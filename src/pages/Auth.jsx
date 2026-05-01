@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import {
-  Zap, Mail, Lock, User, Building2, Eye, EyeOff,
+  Mail, Lock, User, Building2, Eye, EyeOff,
   Sparkles, ArrowRight, Bot, Globe, ShoppingBag,
   Share2, MessageSquare, CreditCard, BarChart3,
-  Send, RefreshCw,
+  RefreshCw,
 } from 'lucide-react'
 import { supabase } from '../lib/supabase.js'
 import { useApp } from '../context/AppContext.jsx'
+import LogoMark from '../components/LogoMark.jsx'
 import './Auth.css'
 
 /* ── AI feature data ─────────────────────────────────────────────── */
@@ -281,14 +282,17 @@ function AuthForm({ initMode, lang }) {
         })
         if (error) setError(error.message)
       } else {
-        if (!form.business_name || !form.owner_name) {
-          setError(id ? 'Nama bisnis dan pemilik wajib diisi' : 'Business name and owner name are required')
+        if (!form.owner_name) {
+          setError(id ? 'Nama pemilik wajib diisi' : 'Owner name is required')
           setLoading(false)
           return
         }
         const { error } = await supabase.auth.signUp({
           email: form.email, password: form.password,
-          options: { data: { owner_name: form.owner_name, business_name: form.business_name } },
+          options: {
+            data: { owner_name: form.owner_name, business_name: form.business_name || '' },
+            emailRedirectTo: `${window.location.origin}/welcome`,
+          },
         })
         if (error) setError(error.message)
         else setSuccess(id
@@ -306,7 +310,7 @@ function AuthForm({ initMode, lang }) {
     <div className="auth-form-wrap">
       <div className="auth-form-header">
         <div className="auth-form-icon">
-          <Zap size={18} fill="white" />
+          <LogoMark size={34} />
         </div>
         <h2 className="auth-form-title">
           {isLogin
@@ -327,8 +331,8 @@ function AuthForm({ initMode, lang }) {
               <div className="auth-input-wrap">
                 <Building2 size={15} className="auth-input-icon" />
                 <input type="text"
-                  placeholder={id ? 'Nama Bisnis / Toko' : 'Business / Store Name'}
-                  value={form.business_name} onChange={set('business_name')} required />
+                  placeholder={id ? 'Nama Bisnis / Toko (opsional)' : 'Business / Store Name (optional)'}
+                  value={form.business_name} onChange={set('business_name')} />
               </div>
             </div>
             <div className="auth-field">
@@ -416,7 +420,7 @@ export default function Auth() {
       {/* ── Top controls ── */}
       <div className="auth-topbar">
         <div className="auth-brand">
-          <div className="auth-brand-logo"><Zap size={16} fill="white" /></div>
+          <div className="auth-brand-logo"><LogoMark size={28} /></div>
           <span className="auth-brand-name">UMKM Hub</span>
         </div>
         <button className="auth-toggle-btn" onClick={toggleLang}>

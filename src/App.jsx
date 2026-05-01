@@ -11,6 +11,7 @@ import ContentStudio from './pages/ContentStudio.jsx'
 import Settings from './pages/Settings.jsx'
 import Auth from './pages/Auth.jsx'
 import Onboarding from './pages/Onboarding.jsx'
+import Welcome from './pages/Welcome.jsx'
 import { useApp } from './context/AppContext.jsx'
 
 const Spinner = () => (
@@ -76,6 +77,9 @@ export default function App() {
       <Route path="/auth" element={
         <PublicRoute><Auth /></PublicRoute>
       } />
+
+      {/* Email verification success — public (handles PKCE code) */}
+      <Route path="/welcome" element={<Welcome />} />
 
       {/* Onboarding — full-screen, outside Layout */}
       <Route path="/onboarding" element={

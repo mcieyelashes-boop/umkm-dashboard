@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Globe, ShoppingBag, Share2, MessageSquare,
-  CreditCard, Wallet, Sparkles, Settings, Zap, X
+  CreditCard, Wallet, Sparkles, Settings, X
 } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { getInitials } from '../utils/string.js'
+import LogoMark from './LogoMark.jsx'
 import './Sidebar.css'
 
 export default function Sidebar({ open, onClose }) {
@@ -34,7 +35,7 @@ export default function Sidebar({ open, onClose }) {
 
       <div className="sidebar-brand">
         <div className="brand-logo">
-          <Zap size={20} fill="white" />
+          <LogoMark size={32} />
         </div>
         <div className="brand-text">
           <div className="brand-name">UMKM Hub</div>

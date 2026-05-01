@@ -1,0 +1,226 @@
+/* ── Welcome / Email Verification page ──────────────────────────── */
+.wlc-root {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Background orbs */
+.wlc-bg { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+
+.wlc-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.18;
+}
+.wlc-orb1 {
+  width: 520px; height: 520px;
+  background: radial-gradient(circle, #7c3aed, transparent);
+  top: -160px; left: -160px;
+}
+.wlc-orb2 {
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, #4338ca, transparent);
+  bottom: -120px; right: -120px;
+}
+.wlc-orb3 {
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, #06b6d4, transparent);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.08;
+}
+
+/* Card */
+.wlc-card {
+  position: relative;
+  z-index: 1;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 44px 40px 36px;
+  max-width: 480px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+  animation: wlcIn 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes wlcIn {
+  from { opacity: 0; transform: scale(0.88) translateY(24px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+
+/* Loading state */
+.wlc-loading-text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+  min-width: 200px;
+}
+
+/* Check ring animation */
+.wlc-check-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.wlc-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #7c3aed;
+  animation: wlcRing 2.4s ease-out infinite;
+}
+.wlc-ring2 { animation-delay: 0.8s; }
+
+@keyframes wlcRing {
+  0%   { transform: scale(0.5); opacity: 0.7; }
+  100% { transform: scale(1.9); opacity: 0; }
+}
+
+.wlc-check-icon {
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #7c3aed, #4338ca);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 8px 24px rgba(124, 58, 237, 0.45);
+  animation: wlcCheckPop 0.5s 0.2s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes wlcCheckPop {
+  from { transform: scale(0); opacity: 0; }
+  to   { transform: scale(1); opacity: 1; }
+}
+
+/* Logo spacing when inside success card */
+.wlc-logo { margin-top: 4px; }
+
+/* Title */
+.wlc-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 4px 0 0;
+  line-height: 1.3;
+}
+
+/* Sub text */
+.wlc-sub {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 360px;
+}
+
+/* Perks list */
+.wlc-perks {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  margin: 8px 0;
+  text-align: left;
+}
+
+.wlc-perk {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--bg-tertiary);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--text-primary);
+  animation: wlcPerkIn 0.4s both;
+}
+.wlc-perk:nth-child(1) { animation-delay: 0.15s; }
+.wlc-perk:nth-child(2) { animation-delay: 0.25s; }
+.wlc-perk:nth-child(3) { animation-delay: 0.35s; }
+.wlc-perk:nth-child(4) { animation-delay: 0.45s; }
+
+@keyframes wlcPerkIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.wlc-perk-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* CTA button */
+.wlc-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #7c3aed, #4338ca);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 13px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.2s;
+  margin-top: 4px;
+  width: 100%;
+  justify-content: center;
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.35);
+}
+.wlc-btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.wlc-btn:active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+/* Footer */
+.wlc-footer {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: 8px;
+}
+
+/* ── Light mode overrides ── */
+.light .wlc-card {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
+}
+.light .wlc-orb1 { opacity: 0.12; }
+.light .wlc-orb2 { opacity: 0.08; }
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .wlc-card { padding: 32px 20px 28px; }
+  .wlc-title { font-size: 19px; }
+}

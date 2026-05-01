@@ -60,11 +60,8 @@
 }
 .auth-brand        { display: flex; align-items: center; gap: 10px; }
 .auth-brand-logo   {
-  width: 34px; height: 34px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #7c3aed, #2563eb);
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 14px rgba(124,58,237,0.4);
+  filter: drop-shadow(0 3px 8px rgba(124,58,237,0.5));
 }
 .auth-brand-name   { font-size: 16px; font-weight: 700; font-family: 'Space Grotesk', sans-serif; letter-spacing: -0.02em; }
 .auth-toggle-btn   {
@@ -343,12 +340,9 @@
 }
 .auth-form-header { text-align: center; }
 .auth-form-icon {
-  width: 48px; height: 48px;
-  border-radius: 14px;
-  background: var(--gradient-primary);
   display: flex; align-items: center; justify-content: center;
   margin: 0 auto 14px;
-  box-shadow: 0 8px 24px rgba(124,58,237,0.4);
+  filter: drop-shadow(0 6px 16px rgba(124,58,237,0.55));
 }
 .auth-form-title {
   font-family: 'Space Grotesk', sans-serif;
@@ -471,7 +465,7 @@
 .light .auth-input-wrap input { background: transparent; }
 .light .auth-input-wrap { background: rgba(241,245,249,0.85); }
 .light .ai-textarea { background: rgba(241,245,249,0.85); }
-.light .auth-form-icon { background: linear-gradient(135deg, #7c3aed, #2563eb); }
+
 .light .auth-input-wrap:focus-within { background: #fff; }
 
 /* ── Responsive ──────────────────────────────────────────────── */

@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
-  ArrowRight, ArrowLeft, Check, Sparkles, Zap, Globe,
+  ArrowRight, ArrowLeft, Check, Sparkles, Globe,
   ShoppingBag, Utensils, Briefcase, Palette, Heart, Package,
-  Star, Crown, Rocket, CheckCircle2, X,
+  Star, Crown, Rocket, CheckCircle2, X, Link2,
 } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { supabase } from '../lib/supabase.js'
+import LogoMark from '../components/LogoMark.jsx'
 import './Onboarding.css'
 
 /* ─── 3D Particle Canvas ────────────────────────────────────────── */
@@ -241,7 +242,7 @@ function Step2({ value, onChange }) {
   return (
     <div className="ob-step ob-step-plans">
       <div className="ob-step-header">
-        <div className="ob-step-badge"><Zap size={13} /> Langkah 2 dari 3</div>
+        <div className="ob-step-badge"><Sparkles size={13} /> Langkah 2 dari 3</div>
         <h2 className="ob-step-title">Pilih paket yang cocok <span>✨</span></h2>
         <p className="ob-step-sub">Mulai gratis, upgrade kapan saja</p>
       </div>
@@ -297,7 +298,11 @@ function Step2({ value, onChange }) {
 }
 
 /* ─── Step 3: Details ───────────────────────────────────────────── */
-function Step3({ profile, tagline, setTagline, wantsWebsite, setWantsWebsite }) {
+function Step3({
+  profile, tagline, setTagline,
+  websiteChoice, setWebsiteChoice,
+  existingUrl, setExistingUrl,
+}) {
   return (
     <div className="ob-step ob-step-details">
       <div className="ob-step-header">
@@ -312,14 +317,14 @@ function Step3({ profile, tagline, setTagline, wantsWebsite, setWantsWebsite }) 
           <label>Nama Bisnis</label>
           <div className="ob-readonly">
             <Sparkles size={14} />
-            <span>{profile?.business_name || '—'}</span>
-            <CheckCircle2 size={14} className="ob-readonly-check" />
+            <span>{profile?.business_name || <span style={{ opacity: 0.45 }}>Belum diisi — bisa dilengkapi di Pengaturan</span>}</span>
+            {profile?.business_name && <CheckCircle2 size={14} className="ob-readonly-check" />}
           </div>
         </div>
 
         {/* Tagline */}
         <div className="ob-field">
-          <label>Tagline / Deskripsi Singkat</label>
+          <label>Tagline / Deskripsi Singkat <span className="ob-optional">(opsional)</span></label>
           <input
             type="text"
             className="ob-input"
@@ -331,30 +336,52 @@ function Step3({ profile, tagline, setTagline, wantsWebsite, setWantsWebsite }) 
           <span className="ob-char">{tagline.length}/80</span>
         </div>
 
-        {/* Landing page toggle */}
+        {/* Website / Landing page */}
         <div className="ob-field">
-          <label>Landing Page</label>
-          <div className="ob-toggle-group">
+          <label>Website Bisnis</label>
+          <p className="ob-field-hint">Apakah kamu sudah punya website atau ingin membuat yang baru?</p>
+          <div className="ob-website-choices">
             <button
-              className={`ob-toggle-btn ${wantsWebsite ? 'ob-toggle-on' : ''}`}
-              onClick={() => setWantsWebsite(true)}
+              className={`ob-wchoice ${websiteChoice === 'existing' ? 'ob-wchoice-on' : ''}`}
+              onClick={() => setWebsiteChoice('existing')}
             >
-              <Globe size={14} />
-              Ya, buat sekarang
+              <Link2 size={15} />
+              <span>Sudah punya website</span>
             </button>
             <button
-              className={`ob-toggle-btn ${!wantsWebsite ? 'ob-toggle-on' : ''}`}
-              onClick={() => setWantsWebsite(false)}
+              className={`ob-wchoice ${websiteChoice === 'create' ? 'ob-wchoice-on' : ''}`}
+              onClick={() => setWebsiteChoice('create')}
             >
-              <X size={14} />
-              Lewati dulu
+              <Globe size={15} />
+              <span>Buat landing page baru</span>
+            </button>
+            <button
+              className={`ob-wchoice ${websiteChoice === 'skip' ? 'ob-wchoice-on' : ''}`}
+              onClick={() => setWebsiteChoice('skip')}
+            >
+              <X size={15} />
+              <span>Lewati dulu</span>
             </button>
           </div>
-          <p className="ob-toggle-hint">
-            {wantsWebsite
-              ? 'Landing page akan disiapkan otomatis — bisa diedit kapan saja.'
-              : 'Kamu bisa membuat landing page nanti dari menu Website.'}
-          </p>
+
+          {websiteChoice === 'existing' && (
+            <div className="ob-url-wrap">
+              <input
+                type="url"
+                className="ob-input ob-url-input"
+                placeholder="https://namabisnis.com"
+                value={existingUrl}
+                onChange={e => setExistingUrl(e.target.value)}
+              />
+              <p className="ob-toggle-hint">Website kamu akan dihubungkan ke dashboard untuk analytics & chat widget.</p>
+            </div>
+          )}
+          {websiteChoice === 'create' && (
+            <p className="ob-toggle-hint">Landing page profesional akan disiapkan otomatis — bisa diedit kapan saja dari menu Website.</p>
+          )}
+          {websiteChoice === 'skip' && (
+            <p className="ob-toggle-hint">Tidak masalah! Kamu bisa mengatur ini nanti dari menu Website.</p>
+          )}
         </div>
       </div>
     </div>
@@ -401,14 +428,15 @@ export default function Onboarding() {
   const { profile, fetchProfile, user } = useApp()
   const navigate = useNavigate()
 
-  const [step,         setStep]         = useState(1)
-  const [businessGoal, setBusinessGoal] = useState('')
-  const [plan,         setPlan]         = useState('free')
-  const [tagline,      setTagline]      = useState('')
-  const [wantsWebsite, setWantsWebsite] = useState(true)
-  const [loading,      setLoading]      = useState(false)
-  const [error,        setError]        = useState('')
-  const [animKey,      setAnimKey]      = useState(0)
+  const [step,          setStep]          = useState(1)
+  const [businessGoal,  setBusinessGoal]  = useState('')
+  const [plan,          setPlan]          = useState('free')
+  const [tagline,       setTagline]       = useState('')
+  const [websiteChoice, setWebsiteChoice] = useState('create')  // 'existing' | 'create' | 'skip'
+  const [existingUrl,   setExistingUrl]   = useState('')
+  const [loading,       setLoading]       = useState(false)
+  const [error,         setError]         = useState('')
+  const [animKey,       setAnimKey]       = useState(0)
 
   /* Trigger slide-in animation on step change */
   const goStep = (n) => {
@@ -429,11 +457,12 @@ export default function Onboarding() {
       const { error: dbError } = await supabase
         .from('profiles')
         .update({
-          onboarded:     true,
-          business_goal: businessGoal,
-          selected_plan: plan,
+          onboarded:             true,
+          business_goal:         businessGoal,
+          selected_plan:         plan,
           tagline,
-          wants_website: wantsWebsite,
+          wants_website:         websiteChoice === 'create',
+          existing_website_url:  websiteChoice === 'existing' ? existingUrl.trim() : '',
         })
         .eq('id', user.id)
 
@@ -467,7 +496,7 @@ export default function Onboarding() {
       <div className="ob-shell">
         {/* Brand */}
         <div className="ob-brand">
-          <div className="ob-brand-logo"><Zap size={18} fill="white" /></div>
+          <LogoMark size={32} />
           <span className="ob-brand-name">UMKM Hub</span>
         </div>
 
@@ -491,7 +520,8 @@ export default function Onboarding() {
             <Step3
               profile={profile}
               tagline={tagline} setTagline={setTagline}
-              wantsWebsite={wantsWebsite} setWantsWebsite={setWantsWebsite}
+              websiteChoice={websiteChoice} setWebsiteChoice={setWebsiteChoice}
+              existingUrl={existingUrl} setExistingUrl={setExistingUrl}
             />
           )}
           {step === 4 && <Step4 onDone={handleDone} businessGoal={businessGoal} plan={plan} />}
