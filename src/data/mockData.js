@@ -132,6 +132,59 @@ export const aiServices = [
   { id: 6, name: 'Avatar AI Influencer', provider: 'Synthesia', description: 'Buat avatar AI yang bisa jadi brand ambassador virtual', price: 'Mulai Rp 125.000', icon: 'user', gradient: 'violet' },
 ]
 
+/* ── Orders (multi-channel) ─────────────────────────────────────── */
+export const allOrders = [
+  { id: 'ORD-3021', customer: 'Siti Nurhaliza',  avatar: 'SN', phone: '0812-3456-7890', items: 'Kemeja Batik Premium ×2',  total: 570000,  channel: 'shopee',     status: 'new',        courier: null,    tracking: null,       date: '01 Mei, 14:32', note: '' },
+  { id: 'ORD-3020', customer: 'Budi Santoso',     avatar: 'BS', phone: '0813-2345-6789', items: 'Kopi Arabika Gayo 500g',  total: 125000,  channel: 'tokopedia',  status: 'processing', courier: 'JNE',   tracking: null,       date: '01 Mei, 14:18', note: '' },
+  { id: 'ORD-3019', customer: 'Maya Wijaya',      avatar: 'MW', phone: '0821-8765-4321', items: 'Tas Kulit Handmade',      total: 450000,  channel: 'website',    status: 'shipped',    courier: 'SiCepat',tracking: 'SC123456', date: '01 Mei, 13:45', note: '' },
+  { id: 'ORD-3018', customer: 'Rudi Hermawan',    avatar: 'RH', phone: '0856-7654-3210', items: 'Hijab Premium Voal ×3',   total: 267000,  channel: 'shopee',     status: 'shipped',    courier: 'J&T',   tracking: 'JT789012', date: '01 Mei, 13:20', note: '' },
+  { id: 'ORD-3017', customer: 'Lina Marlina',     avatar: 'LM', phone: '0877-6543-2109', items: 'Sepatu Kulit Casual',     total: 520000,  channel: 'whatsapp',   status: 'new',        courier: null,    tracking: null,       date: '01 Mei, 12:58', note: 'Minta gift wrap' },
+  { id: 'ORD-3016', customer: 'Doni Kusuma',      avatar: 'DK', phone: '0899-5432-1098', items: 'Madu Hutan 250ml ×2',    total: 330000,  channel: 'tiktok',     status: 'done',       courier: 'Anteraja',tracking: 'AT345678',date: '01 Mei, 12:10', note: '' },
+  { id: 'ORD-3015', customer: 'Rina Setiawati',   avatar: 'RS', phone: '0812-4321-0987', items: 'Kemeja Batik Premium',    total: 285000,  channel: 'tokopedia',  status: 'done',       courier: 'JNE',   tracking: 'JNE901234',date: '01 Mei, 11:50', note: '' },
+  { id: 'ORD-3014', customer: 'Faisal Akbar',     avatar: 'FA', phone: '0878-3210-9876', items: 'Kopi Arabika Gayo ×4',   total: 500000,  channel: 'instagram',  status: 'processing', courier: null,    tracking: null,       date: '01 Mei, 11:22', note: 'Reseller, minta invoice' },
+  { id: 'ORD-3013', customer: 'Putri Andini',     avatar: 'PA', phone: '0821-2109-8765', items: 'Hijab Premium Voal',      total: 89000,   channel: 'shopee',     status: 'cancelled',  courier: null,    tracking: null,       date: '01 Mei, 10:45', note: 'Pembeli cancel' },
+  { id: 'ORD-3012', customer: 'Hendra Gunawan',   avatar: 'HG', phone: '0856-1098-7654', items: 'Sepatu Kulit Casual ×2',  total: 1040000, channel: 'website',    status: 'shipped',    courier: 'Gosend', tracking: 'GS567890', date: '01 Mei, 10:12', note: '' },
+]
+
+/* ── CRM Contacts ───────────────────────────────────────────────── */
+export const crmContacts = [
+  { id: 1,  name: 'Siti Nurhaliza',  avatar: 'SN', phone: '0812-3456-7890', email: 'siti@gmail.com',  source: 'shopee',    tags: ['VIP','Fashion'],  totalSpend: 4280000,  orders: 18, lastContact: '2 jam lalu',  stage: 'closing' },
+  { id: 2,  name: 'Budi Santoso',    avatar: 'BS', phone: '0813-2345-6789', email: 'budi@gmail.com',  source: 'tokopedia', tags: ['F&B'],             totalSpend: 875000,   orders: 7,  lastContact: '1 hari lalu', stage: 'prospek' },
+  { id: 3,  name: 'Maya Wijaya',     avatar: 'MW', phone: '0821-8765-4321', email: 'maya@gmail.com',  source: 'website',   tags: ['Reseller'],       totalSpend: 12450000, orders: 42, lastContact: '30 mnt lalu', stage: 'negosiasi' },
+  { id: 4,  name: 'Rudi Hermawan',   avatar: 'RH', phone: '0856-7654-3210', email: 'rudi@gmail.com',  source: 'instagram', tags: ['Fashion','VIP'],  totalSpend: 3120000,  orders: 15, lastContact: '3 hari lalu', stage: 'lead' },
+  { id: 5,  name: 'Lina Marlina',    avatar: 'LM', phone: '0877-6543-2109', email: 'lina@gmail.com',  source: 'whatsapp',  tags: ['Kuliner'],        totalSpend: 650000,   orders: 5,  lastContact: '5 jam lalu',  stage: 'lead' },
+  { id: 6,  name: 'Doni Kusuma',     avatar: 'DK', phone: '0899-5432-1098', email: 'doni@gmail.com',  source: 'facebook',  tags: ['F&B'],            totalSpend: 330000,   orders: 3,  lastContact: '1 minggu',    stage: 'won' },
+  { id: 7,  name: 'Rina Setiawati',  avatar: 'RS', phone: '0812-4321-0987', email: 'rina@gmail.com',  source: 'shopee',    tags: ['Fashion'],        totalSpend: 1860000,  orders: 11, lastContact: '2 hari lalu', stage: 'prospek' },
+  { id: 8,  name: 'Faisal Akbar',    avatar: 'FA', phone: '0878-3210-9876', email: 'faisal@gmail.com',source: 'instagram', tags: ['Reseller','VIP'], totalSpend: 28400000, orders: 86, lastContact: '1 jam lalu',  stage: 'negosiasi' },
+  { id: 9,  name: 'Putri Andini',    avatar: 'PA', phone: '0821-2109-8765', email: 'putri@gmail.com', source: 'tiktok',    tags: ['Fashion'],        totalSpend: 445000,   orders: 4,  lastContact: '4 hari lalu', stage: 'lead' },
+  { id: 10, name: 'Hendra Gunawan',  avatar: 'HG', phone: '0856-1098-7654', email: 'hendra@gmail.com',source: 'website',   tags: ['Reseller'],       totalSpend: 7620000,  orders: 29, lastContact: '6 jam lalu',  stage: 'closing' },
+]
+
+export const crmDeals = [
+  { id: 1, contact: 'Maya Wijaya',    title: 'Reseller bulk batik 100 pcs',      value: 28500000,  stage: 'negosiasi', probability: 70, due: '10 Mei' },
+  { id: 2, contact: 'Faisal Akbar',   title: 'Distributor kopi Jabodetabek',     value: 15000000,  stage: 'negosiasi', probability: 55, due: '15 Mei' },
+  { id: 3, contact: 'Siti Nurhaliza', title: 'Bulk order hijab premium 50 pcs',  value: 4450000,   stage: 'closing',   probability: 85, due: '05 Mei' },
+  { id: 4, contact: 'Hendra Gunawan', title: 'Kerjasama reseller sepatu',        value: 10400000,  stage: 'closing',   probability: 90, due: '03 Mei' },
+  { id: 5, contact: 'Budi Santoso',   title: 'Langganan kopi kantor bulanan',    value: 1500000,   stage: 'prospek',   probability: 40, due: '20 Mei' },
+  { id: 6, contact: 'Rina Setiawati', title: 'Koleksi fashion Lebaran 2026',     value: 3720000,   stage: 'prospek',   probability: 45, due: '25 Mei' },
+  { id: 7, contact: 'Rudi Hermawan',  title: 'Order seragam batik perusahaan',   value: 8550000,   stage: 'lead',      probability: 20, due: '30 Mei' },
+  { id: 8, contact: 'Lina Marlina',   title: 'Katering acara nikahan 200 pax',   value: 6500000,   stage: 'lead',      probability: 15, due: '02 Jun' },
+  { id: 9, contact: 'Doni Kusuma',    title: 'Paket hampers madu 100 set',       value: 16500000,  stage: 'won',       probability: 100, due: '01 Mei' },
+  { id: 10,contact: 'Hendra Gunawan', title: 'Reseller tas kulit Surabaya',      value: 9000000,   stage: 'won',       probability: 100, due: '28 Apr' },
+]
+
+/* ── Inventory ──────────────────────────────────────────────────── */
+export const inventoryItems = [
+  { id: 1, sku: 'BTK-001', name: 'Kemeja Batik Premium',    category: 'Fashion',   image: 'shirt',  stock: 142, minStock: 20, buyPrice: 150000, sellPrice: 285000, supplier: 'PT Batik Nusantara', channels: ['website','tokopedia','shopee'], status: 'active' },
+  { id: 2, sku: 'TAS-014', name: 'Tas Kulit Asli Handmade', category: 'Aksesoris', image: 'bag',    stock: 38,  minStock: 15, buyPrice: 210000, sellPrice: 450000, supplier: 'CV Kreatif Leather',  channels: ['website','tiktok'],            status: 'active' },
+  { id: 3, sku: 'KPI-008', name: 'Kopi Arabika Gayo 500g',  category: 'F&B',       image: 'coffee', stock: 256, minStock: 50, buyPrice: 55000,  sellPrice: 125000, supplier: 'UD Gayo Coffee',      channels: ['website','tokopedia','shopee','tiktok'], status: 'active' },
+  { id: 4, sku: 'HJB-022', name: 'Hijab Premium Voal',      category: 'Fashion',   image: 'scarf',  stock: 8,   minStock: 30, buyPrice: 42000,  sellPrice: 89000,  supplier: 'PT Sutera Nusantara', channels: ['shopee','tokopedia'],          status: 'low' },
+  { id: 5, sku: 'MDU-003', name: 'Madu Hutan Murni 250ml',  category: 'F&B',       image: 'honey',  stock: 0,   minStock: 25, buyPrice: 78000,  sellPrice: 165000, supplier: 'UD Lebah Borneo',     channels: ['website','tokopedia'],         status: 'out' },
+  { id: 6, sku: 'SPT-019', name: 'Sepatu Kulit Casual',     category: 'Fashion',   image: 'shoe',   stock: 64,  minStock: 10, buyPrice: 245000, sellPrice: 520000, supplier: 'CV Kulit Prima',      channels: ['website'],                     status: 'active' },
+  { id: 7, sku: 'BTK-002', name: 'Kemeja Batik Slim Fit',   category: 'Fashion',   image: 'shirt',  stock: 12,  minStock: 20, buyPrice: 135000, sellPrice: 265000, supplier: 'PT Batik Nusantara', channels: ['website','shopee'],            status: 'low' },
+  { id: 8, sku: 'KPI-009', name: 'Kopi Robusta Flores 1kg', category: 'F&B',       image: 'coffee', stock: 84,  minStock: 30, buyPrice: 68000,  sellPrice: 145000, supplier: 'UD Flores Coffee',    channels: ['tokopedia','tiktok'],          status: 'active' },
+]
+
 export const recentVideos = [
   { id: 1, title: 'Promo Batik Premium', duration: '0:30', thumbnail: 'video1', date: 'Hari ini', cost: 35000, status: 'completed' },
   { id: 2, title: 'Unboxing Tas Kulit', duration: '0:45', thumbnail: 'video2', date: 'Kemarin', cost: 50000, status: 'completed' },

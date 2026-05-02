@@ -12,6 +12,9 @@ import Settings from './pages/Settings.jsx'
 import Auth from './pages/Auth.jsx'
 import Onboarding from './pages/Onboarding.jsx'
 import Welcome from './pages/Welcome.jsx'
+import Orders from './pages/Orders.jsx'
+import CRM from './pages/CRM.jsx'
+import Inventory from './pages/Inventory.jsx'
 import { useApp } from './context/AppContext.jsx'
 
 const Spinner = () => (
@@ -97,8 +100,11 @@ export default function App() {
         <Route path="/chat"      element={<Chat />} />
         <Route path="/payment"   element={<Payment />} />
         <Route path="/wallet"    element={<Wallet />} />
-        <Route path="/studio"    element={<ContentStudio />} />
-        <Route path="/settings"  element={<Settings />} />
+        <Route path="/studio"     element={<ContentStudio />} />
+        <Route path="/orders"     element={<Orders />} />
+        <Route path="/crm"        element={<CRM />} />
+        <Route path="/inventory"  element={<Inventory />} />
+        <Route path="/settings"   element={<Settings />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

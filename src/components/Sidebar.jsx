@@ -1,7 +1,8 @@
 import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Globe, ShoppingBag, Share2, MessageSquare,
-  CreditCard, Wallet, Sparkles, Settings, X
+  CreditCard, Wallet, Sparkles, Settings, X,
+  ClipboardList, Users, Package2,
 } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { getInitials } from '../utils/string.js'
@@ -15,16 +16,43 @@ export default function Sidebar({ open, onClose }) {
   const plan = profile?.plan || 'Starter'
   const avatarText = profile?.avatar || getInitials(profile?.owner_name || businessName)
 
-  const menuItems = [
-    { path: '/', icon: LayoutDashboard, labelKey: 'dashboard', badge: null },
-    { path: '/website', icon: Globe, labelKey: 'website', badge: null },
-    { path: '/ecommerce', icon: ShoppingBag, labelKey: 'ecommerce', badge: null },
-    { path: '/social', icon: Share2, labelKey: 'social', badge: null },
-    { path: '/chat', icon: MessageSquare, labelKey: 'chat', badge: null },
-    { path: '/payment', icon: CreditCard, labelKey: 'payment', badge: null },
-    { path: '/wallet', icon: Wallet, labelKey: 'wallet', badge: null },
-    { path: '/studio', icon: Sparkles, labelKey: 'studio', badge: 'AI' },
+  const operationalItems = [
+    { path: '/',          icon: LayoutDashboard, label: 'Dashboard',   badge: null },
+    { path: '/orders',    icon: ClipboardList,   label: 'Pesanan',     badge: null },
+    { path: '/inventory', icon: Package2,        label: 'Inventori',   badge: null },
+    { path: '/ecommerce', icon: ShoppingBag,     label: t.nav.ecommerce, badge: null },
+    { path: '/payment',   icon: CreditCard,      label: t.nav.payment,   badge: null },
+    { path: '/wallet',    icon: Wallet,          label: t.nav.wallet,    badge: null },
   ]
+
+  const growthItems = [
+    { path: '/website', icon: Globe,          label: t.nav.website, badge: null },
+    { path: '/social',  icon: Share2,         label: t.nav.social,  badge: null },
+    { path: '/studio',  icon: Sparkles,       label: t.nav.studio,  badge: 'AI' },
+  ]
+
+  const crmItems = [
+    { path: '/chat', icon: MessageSquare, label: t.nav.chat, badge: null },
+    { path: '/crm',  icon: Users,         label: 'CRM',      badge: null },
+  ]
+
+  const renderItems = items => items.map(item => (
+    <NavLink
+      key={item.path}
+      to={item.path}
+      end={item.path === '/'}
+      className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
+      onClick={onClose}
+    >
+      <item.icon size={17} />
+      <span className="nav-label">{item.label}</span>
+      {item.badge && (
+        <span className={`nav-badge ${item.badge === 'AI' ? 'ai' : ''}`}>
+          {item.badge}
+        </span>
+      )}
+    </NavLink>
+  ))
 
   return (
     <aside className={`sidebar${open ? ' sidebar-mobile-open' : ''}`}>
@@ -44,32 +72,22 @@ export default function Sidebar({ open, onClose }) {
       </div>
 
       <nav className="sidebar-nav">
-        <div className="nav-section-label">{t.nav.mainMenu}</div>
-        {menuItems.map((item) => (
-          <NavLink
-            key={item.path}
-            to={item.path}
-            end={item.path === '/'}
-            className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
-            onClick={onClose}
-          >
-            <item.icon size={18} />
-            <span className="nav-label">{t.nav[item.labelKey]}</span>
-            {item.badge && (
-              <span className={`nav-badge ${item.badge === 'AI' ? 'ai' : ''}`}>
-                {item.badge}
-              </span>
-            )}
-          </NavLink>
-        ))}
+        <div className="nav-section-label">Operasional</div>
+        {renderItems(operationalItems)}
 
-        <div className="nav-section-label" style={{ marginTop: 24 }}>{t.nav.account}</div>
+        <div className="nav-section-label" style={{ marginTop: 18 }}>Pertumbuhan</div>
+        {renderItems(growthItems)}
+
+        <div className="nav-section-label" style={{ marginTop: 18 }}>Pelanggan</div>
+        {renderItems(crmItems)}
+
+        <div className="nav-section-label" style={{ marginTop: 18 }}>{t.nav.account}</div>
         <NavLink
           to="/settings"
           className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
           onClick={onClose}
         >
-          <Settings size={18} />
+          <Settings size={17} />
           <span className="nav-label">{t.nav.settings}</span>
         </NavLink>
       </nav>
