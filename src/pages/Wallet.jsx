@@ -3,8 +3,9 @@ import {
   Wallet as WalletIcon, Plus, ArrowUpRight, ArrowDownLeft,
   Sparkles, Crown, Check, CreditCard, Building2, QrCode, Smartphone, Zap, Gift
 } from 'lucide-react'
-import { walletTransactions, subscriptionPlan, businessProfile } from '../data/mockData.js'
+import { subscriptionPlan } from '../data/mockData.js'
 import { useApp } from '../context/AppContext.jsx'
+import { useWallet } from '../hooks/useWallet.js'
 import './shared.css'
 import './Wallet.css'
 
@@ -15,8 +16,14 @@ const topupAmounts = [100000, 250000, 500000, 1000000, 2000000, 5000000]
 export default function Wallet() {
   const [selectedAmount, setSelectedAmount] = useState(500000)
   const [selectedMethod, setSelectedMethod] = useState('QRIS')
-  const { t } = useApp()
+  const { t, profile } = useApp()
   const w = t.wallet
+
+  const { transactions, loading: txLoading, addTransaction } = useWallet()
+
+  const walletBalance = profile?.wallet_balance ?? 0
+  const ownerName     = profile?.owner_name ?? 'Pemilik'
+  const planName      = profile?.plan ?? 'Starter'
 
   const topupMethods = [
     { name: 'QRIS', icon: QrCode, instant: true },
@@ -48,7 +55,7 @@ export default function Wallet() {
               <div className="wallet-hero-label">
                 <WalletIcon size={14} /> {w.activeBalance}
               </div>
-              <div className="wallet-hero-amount">{formatRupiah(businessProfile.walletBalance)}</div>
+              <div className="wallet-hero-amount">{formatRupiah(walletBalance)}</div>
               <div className="wallet-hero-meta">
                 <span className="meta-up">
                   <ArrowUpRight size={11} /> {w.balanceSuffix}
@@ -62,11 +69,11 @@ export default function Wallet() {
               <div className="wcm-bottom">
                 <div>
                   <div className="wcm-label">Holder</div>
-                  <div className="wcm-value">{businessProfile.owner}</div>
+                  <div className="wcm-value">{ownerName}</div>
                 </div>
                 <div>
                   <div className="wcm-label">Plan</div>
-                  <div className="wcm-value">{businessProfile.plan}</div>
+                  <div className="wcm-value">{planName}</div>
                 </div>
               </div>
             </div>
@@ -223,23 +230,40 @@ export default function Wallet() {
           </div>
         </div>
         <div className="wallet-tx-list">
-          {walletTransactions.map((tx) => (
-            <div key={tx.id} className="wallet-tx">
-              <div className={`wtx-icon ${tx.type}`}>
-                {tx.type === 'topup' ? <ArrowDownLeft size={14} /> : <ArrowUpRight size={14} />}
-              </div>
-              <div className="wtx-content">
-                <div className="wtx-desc">{tx.description}</div>
-                <div className="wtx-date">{tx.date}</div>
-              </div>
-              <div className="wtx-amounts">
-                <div className={`wtx-amount ${tx.type}`}>
-                  {tx.type === 'topup' ? '+' : '-'} {formatRupiah(tx.amount)}
-                </div>
-                <div className="wtx-balance">{w.balanceLabel} {formatRupiah(tx.balance)}</div>
-              </div>
+          {txLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '32px' }}>
+              <div className="spinner" />
             </div>
-          ))}
+          ) : transactions.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px 24px', color: 'var(--text-tertiary)', fontSize: 13 }}>
+              <WalletIcon size={28} style={{ opacity: 0.3, marginBottom: 8 }} />
+              <div>Belum ada transaksi</div>
+            </div>
+          ) : (
+            transactions.map((tx) => {
+              const isIncome = tx.type === 'topup' || tx.amount > 0
+              const dateStr = new Date(tx.created_at || tx.date).toLocaleDateString('id-ID', {
+                day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit',
+              })
+              return (
+                <div key={tx.id} className="wallet-tx">
+                  <div className={`wtx-icon ${isIncome ? 'topup' : 'expense'}`}>
+                    {isIncome ? <ArrowDownLeft size={14} /> : <ArrowUpRight size={14} />}
+                  </div>
+                  <div className="wtx-content">
+                    <div className="wtx-desc">{tx.description}</div>
+                    <div className="wtx-date">{dateStr}</div>
+                  </div>
+                  <div className="wtx-amounts">
+                    <div className={`wtx-amount ${isIncome ? 'topup' : 'expense'}`}>
+                      {isIncome ? '+' : '-'} {formatRupiah(Math.abs(tx.amount))}
+                    </div>
+                    <div className="wtx-balance">{w.balanceLabel} {formatRupiah(tx.balance_after ?? 0)}</div>
+                  </div>
+                </div>
+              )
+            })
+          )}
         </div>
       </div>
     </div>

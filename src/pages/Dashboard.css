@@ -461,6 +461,106 @@
   line-height: 1.5;
 }
 
+/* Recent orders mini-list on Dashboard */
+.dash-recent-orders {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dash-order-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+
+.dash-order-row:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.dash-order-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dash-order-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.dash-order-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-order-items {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dash-order-right {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.dash-order-amount {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.dash-order-status {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: capitalize;
+  padding: 2px 8px;
+  border-radius: 20px;
+  margin-top: 2px;
+  display: inline-block;
+}
+
+.dash-order-status.s-new        { background: rgba(99,102,241,0.12); color: #6366f1; }
+.dash-order-status.s-processing { background: rgba(245,158,11,0.12); color: #f59e0b; }
+.dash-order-status.s-shipped    { background: rgba(6,182,212,0.12);  color: #06b6d4; }
+.dash-order-status.s-done       { background: rgba(16,185,129,0.12); color: #10b981; }
+.dash-order-status.s-cancelled  { background: rgba(239,68,68,0.12);  color: #ef4444; }
+
+.dash-view-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-primary);
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  margin-top: 6px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.dash-view-all:hover { opacity: 0.75; }
+
 @media (max-width: 1280px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .dashboard-grid { grid-template-columns: 1fr; }

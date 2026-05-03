@@ -1,12 +1,18 @@
 import { Bell, Lock, Globe, CreditCard, Users, Zap, Shield, ChevronRight } from 'lucide-react'
-import { businessProfile } from '../data/mockData.js'
 import { useApp } from '../context/AppContext.jsx'
 import './shared.css'
 import './Settings.css'
 
 export default function Settings() {
-  const { t } = useApp()
+  const { t, profile, user } = useApp()
   const s = t.settings
+
+  // Compute display values from real profile
+  const ownerName    = profile?.owner_name   || '—'
+  const businessName = profile?.business_name || 'Bisnis Saya'
+  const planName     = profile?.plan          || 'Starter'
+  const userEmail    = user?.email            || '—'
+  const avatarText   = ownerName.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase() || '?'
 
   const settingSections = [
     { icon: Users, titleKey: 'businessProfile', descKey: 'businessProfileDesc', badge: null },
@@ -28,15 +34,15 @@ export default function Settings() {
       </div>
 
       <div className="settings-profile glass">
-        <div className="settings-avatar">{businessProfile.avatar}</div>
+        <div className="settings-avatar">{avatarText}</div>
         <div className="settings-info">
-          <div className="settings-name">{businessProfile.name}</div>
+          <div className="settings-name">{businessName}</div>
           <div className="settings-meta">
-            <span>{businessProfile.owner}</span>
+            <span>{ownerName}</span>
             <span>·</span>
-            <span className="settings-email">mci.eyelashes@gmail.com</span>
+            <span className="settings-email">{userEmail}</span>
             <span>·</span>
-            <span className="badge badge-primary">{businessProfile.plan}</span>
+            <span className="badge badge-primary">{planName}</span>
           </div>
         </div>
         <button className="btn-secondary">{s.editProfile}</button>

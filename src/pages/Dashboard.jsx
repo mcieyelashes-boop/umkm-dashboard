@@ -1,13 +1,14 @@
 import {
   Minus, Wallet, ShoppingBag, Globe, Heart,
   Eye, Zap, MessageSquare, Sparkles, TrendingUp,
-  ShoppingCart
+  ShoppingCart, ChevronRight,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import {
   AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from 'recharts'
 import { useApp } from '../context/AppContext.jsx'
+import { useOrderStats, useOrders } from '../hooks/useOrders.js'
 import { formatRupiah, formatCompact } from '../utils/currency.js'
 import './Dashboard.css'
 
@@ -20,17 +21,31 @@ export default function Dashboard() {
   const { t, theme, profile, lang } = useApp()
   const d = t.dashboard
 
+  const { stats: orderStats, chart: revenueData, loading: statsLoading } = useOrderStats()
+  const { orders: recentOrders, loading: ordersLoading } = useOrders()
+
   const ownerName = profile?.owner_name?.split(' ')[0] || ''
   const walletBalance = profile?.wallet_balance ?? 0
 
   const days = lang === 'id' ? DAYS_ID : DAYS_EN
   const emptyChart = days.map(name => ({ name, revenue: 0, orders: 0 }))
+  const chartData = (!statsLoading && revenueData.length > 0) ? revenueData : emptyChart
 
   const stats = [
-    { label: d.totalRevenue ?? 'Total Pendapatan', value: formatRupiah(0), change: '0%', positive: true, icon: 'wallet' },
-    { label: d.orders ?? 'Pesanan', value: '0', change: '0%', positive: true, icon: 'shopping' },
-    { label: d.webVisitors ?? 'Pengunjung Web', value: '0', change: '0%', positive: true, icon: 'globe' },
-    { label: d.socialEngagement ?? 'Engagement Sosmed', value: '0', change: '0%', positive: true, icon: 'heart' },
+    {
+      label: d.totalRevenue ?? 'Total Pendapatan',
+      value: statsLoading ? '—' : formatCompact(orderStats?.revenue ?? 0),
+      change: statsLoading ? '—' : `${orderStats?.today ?? 0} hari ini`,
+      positive: true, icon: 'wallet',
+    },
+    {
+      label: d.orders ?? 'Pesanan',
+      value: statsLoading ? '—' : (orderStats?.total ?? 0).toLocaleString('id-ID'),
+      change: statsLoading ? '—' : `${orderStats?.pending ?? 0} perlu proses`,
+      positive: true, icon: 'shopping',
+    },
+    { label: d.webVisitors ?? 'Pengunjung Web',       value: '—', change: 'Segera hadir', positive: true, icon: 'globe'   },
+    { label: d.socialEngagement ?? 'Engagement Sosmed', value: '—', change: 'Segera hadir', positive: true, icon: 'heart'  },
   ]
 
   const tooltipStyle = {
@@ -95,7 +110,7 @@ export default function Dashboard() {
           </div>
           <div className="chart-wrapper">
             <ResponsiveContainer width="100%" height={280}>
-              <AreaChart data={emptyChart}>
+              <AreaChart data={chartData}>
                 <defs>
                   <linearGradient id="revGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#6366f1" stopOpacity={0.4} />
@@ -103,8 +118,8 @@ export default function Dashboard() {
                   </linearGradient>
                 </defs>
                 <XAxis dataKey="name" stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} tickFormatter={formatCompact} domain={[0, 100]} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v) => formatRupiah(v)} />
+                <YAxis stroke="#64748b" fontSize={11} tickLine={false} axisLine={false} tickFormatter={formatCompact} domain={chartData === emptyChart ? [0, 100] : ['auto', 'auto']} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v) => formatCompact(v)} />
                 <Area type="monotone" dataKey="revenue" stroke="#6366f1" strokeWidth={2.5} fill="url(#revGrad)" />
               </AreaChart>
             </ResponsiveContainer>
@@ -139,26 +154,46 @@ export default function Dashboard() {
       </div>
 
       <div className="dashboard-grid-2">
-        {/* Recent orders — empty state */}
+        {/* Recent orders */}
         <div className="glass orders-card">
           <div className="card-header">
             <div>
               <h3 className="card-title">{d.recentOrders}</h3>
-              <p className="card-subtitle">0 {d.newOrders}</p>
+              <p className="card-subtitle">{orderStats?.today ?? 0} {d.newOrders}</p>
             </div>
-            <Link to="/ecommerce" className="card-link">{d.viewAll}</Link>
+            <Link to="/orders" className="card-link">{d.viewAll}</Link>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', gap: 12, color: 'var(--text-tertiary)' }}>
-            <ShoppingCart size={36} strokeWidth={1.2} style={{ opacity: 0.4 }} />
-            <div style={{ fontSize: 14, fontWeight: 500 }}>
-              {lang === 'id' ? 'Belum ada pesanan' : 'No orders yet'}
+          {ordersLoading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', padding: '32px' }}>
+              <div className="spinner" />
             </div>
-            <div style={{ fontSize: 12, opacity: 0.7, textAlign: 'center', maxWidth: 200 }}>
-              {lang === 'id'
-                ? 'Pesanan dari toko kamu akan muncul di sini'
-                : 'Orders from your store will appear here'}
+          ) : recentOrders.length === 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '40px 0', gap: 12, color: 'var(--text-tertiary)' }}>
+              <ShoppingCart size={36} strokeWidth={1.2} style={{ opacity: 0.4 }} />
+              <div style={{ fontSize: 14, fontWeight: 500 }}>
+                {lang === 'id' ? 'Belum ada pesanan' : 'No orders yet'}
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="dash-recent-orders">
+              {recentOrders.slice(0, 5).map(o => (
+                <div key={o.id} className="dash-order-row">
+                  <div className="dash-order-avatar">{o.customer_avatar || o.customer_name?.[0] || '?'}</div>
+                  <div className="dash-order-info">
+                    <div className="dash-order-name">{o.customer_name}</div>
+                    <div className="dash-order-items">{o.items}</div>
+                  </div>
+                  <div className="dash-order-right">
+                    <div className="dash-order-amount">{formatCompact(o.total)}</div>
+                    <div className={`dash-order-status s-${o.status}`}>{o.status}</div>
+                  </div>
+                </div>
+              ))}
+              <Link to="/orders" className="dash-view-all">
+                Lihat semua {recentOrders.length} pesanan <ChevronRight size={13} />
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Quick actions */}

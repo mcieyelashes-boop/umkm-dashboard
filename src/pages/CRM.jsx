@@ -1,21 +1,16 @@
 import { useState, useMemo } from 'react'
 import {
-  Users, Search, Plus, TrendingUp, Phone, Mail,
-  MessageSquare, Filter, MoreHorizontal, Star,
-  ShoppingBag, Globe, Instagram, Facebook,
-  ChevronRight, DollarSign, Target, Award,
-  GripVertical,
+  Users, Search, Plus, Phone, Mail,
+  MessageSquare, MoreHorizontal,
+  Globe, Target, RefreshCw, AlertCircle,
+  UserPlus,
 } from 'lucide-react'
-import { crmContacts, crmDeals } from '../data/mockData.js'
+import { useCRM } from '../hooks/useCRM.js'
+import { formatRupiah, formatCompact } from '../utils/currency.js'
 import './shared.css'
 import './CRM.css'
 
-const formatRupiah = n => {
-  if (n >= 1000000) return 'Rp ' + (n / 1000000).toFixed(1) + 'Jt'
-  return 'Rp ' + n.toLocaleString('id-ID')
-}
-
-/* ── Source icons ── */
+/* ── Source config ── */
 const SOURCE = {
   shopee:    { label: 'Shopee',    color: '#f97316' },
   tokopedia: { label: 'Tokopedia', color: '#10b981' },
@@ -28,14 +23,14 @@ const SOURCE = {
 
 /* ── Pipeline stages ── */
 const STAGES = [
-  { key: 'lead',      label: 'Lead',       color: '#6366f1', desc: 'Potensi baru'       },
-  { key: 'prospek',   label: 'Prospek',    color: '#f59e0b', desc: 'Tertarik produk'    },
-  { key: 'negosiasi', label: 'Negosiasi',  color: '#06b6d4', desc: 'Diskusi harga'      },
-  { key: 'closing',   label: 'Closing',    color: '#a855f7', desc: 'Hampir deal'        },
-  { key: 'won',       label: 'Menang 🎉',  color: '#10b981', desc: 'Deal berhasil'      },
+  { key: 'lead',      label: 'Lead',       color: '#6366f1', desc: 'Potensi baru'    },
+  { key: 'prospek',   label: 'Prospek',    color: '#f59e0b', desc: 'Tertarik produk' },
+  { key: 'negosiasi', label: 'Negosiasi',  color: '#06b6d4', desc: 'Diskusi harga'   },
+  { key: 'closing',   label: 'Closing',    color: '#a855f7', desc: 'Hampir deal'     },
+  { key: 'won',       label: 'Menang 🎉',  color: '#10b981', desc: 'Deal berhasil'   },
 ]
 
-/* ── Tags ── */
+/* ── Tag colours ── */
 const TAG_COLOR = {
   VIP:      { bg: '#f59e0b18', color: '#f59e0b' },
   Reseller: { bg: '#6366f118', color: '#818cf8' },
@@ -44,27 +39,28 @@ const TAG_COLOR = {
   Kuliner:  { bg: '#10b98118', color: '#10b981' },
 }
 
+/* ── Sub-components ── */
 function ContactCard({ c, selected, onSelect }) {
-  const src = SOURCE[c.source] || { label: c.source, color: '#6366f1' }
+  const src = SOURCE[c.source] || { label: c.source || '—', color: '#6366f1' }
   return (
     <div className={`crm-contact-card ${selected ? 'selected' : ''}`} onClick={onSelect}>
       <div className="crm-contact-top">
         <div className="crm-avatar">
-          {c.avatar}
+          {c.avatar || c.name?.[0] || '?'}
           <div className="crm-avatar-source" style={{ background: src.color }} />
         </div>
         <div className="crm-contact-info">
           <div className="crm-contact-name">{c.name}</div>
-          <div className="crm-contact-meta">{src.label} · {c.lastContact}</div>
+          <div className="crm-contact-meta">{src.label} · {c.last_contact || c.lastContact || '—'}</div>
         </div>
-        <div className="crm-contact-spend">{formatRupiah(c.totalSpend)}</div>
+        <div className="crm-contact-spend">{formatCompact(c.total_spend ?? c.totalSpend ?? 0)}</div>
       </div>
       <div className="crm-contact-tags">
-        {c.tags.map(tag => {
+        {(c.tags || []).map(tag => {
           const tc = TAG_COLOR[tag] || { bg: '#6366f118', color: '#818cf8' }
           return <span key={tag} className="crm-tag" style={{ background: tc.bg, color: tc.color }}>{tag}</span>
         })}
-        <span className="crm-orders-badge">{c.orders} order</span>
+        <span className="crm-orders-badge">{c.orders ?? 0} order</span>
       </div>
     </div>
   )
@@ -78,14 +74,14 @@ function DealCard({ deal }) {
         <div className="crm-deal-title">{deal.title}</div>
         <button className="crm-deal-more"><MoreHorizontal size={13} /></button>
       </div>
-      <div className="crm-deal-contact">{deal.contact}</div>
+      <div className="crm-deal-contact">{deal.contact_name || deal.contact}</div>
       <div className="crm-deal-footer">
-        <div className="crm-deal-value">{formatRupiah(deal.value)}</div>
+        <div className="crm-deal-value">{formatCompact(deal.value)}</div>
         <div className="crm-deal-prob" style={{ color: stage?.color }}>
           {deal.probability}%
         </div>
       </div>
-      <div className="crm-deal-due">Jatuh tempo: {deal.due}</div>
+      <div className="crm-deal-due">Jatuh tempo: {deal.due_date || deal.due || '—'}</div>
       <div className="crm-deal-bar">
         <div className="crm-deal-bar-fill" style={{ width: `${deal.probability}%`, background: stage?.color }} />
       </div>
@@ -93,24 +89,41 @@ function DealCard({ deal }) {
   )
 }
 
+/* ── Main component ── */
 export default function CRM() {
-  const [view,          setView]          = useState('pipeline') // pipeline | contacts
-  const [selectedContact, setSelectedContact] = useState(null)
-  const [search,        setSearch]        = useState('')
+  const [view,             setView]             = useState('pipeline')
+  const [selectedContact,  setSelectedContact]  = useState(null)
+  const [search,           setSearch]           = useState('')
+
+  const {
+    contacts, deals, loading, error, refetch,
+    createContact, createDeal,
+  } = useCRM()
 
   const filteredContacts = useMemo(() =>
-    crmContacts.filter(c =>
-      !search || c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.phone.includes(search)
-    ), [search])
+    contacts.filter(c =>
+      !search ||
+      c.name?.toLowerCase().includes(search.toLowerCase()) ||
+      c.phone?.includes(search)
+    ), [contacts, search])
 
-  const totalPipelineValue = crmDeals
-    .filter(d => d.stage !== 'won')
-    .reduce((s, d) => s + d.value, 0)
+  const activeDeals = deals.filter(d => d.stage !== 'won')
+  const wonDeals    = deals.filter(d => d.stage === 'won')
 
-  const wonValue = crmDeals
-    .filter(d => d.stage === 'won')
-    .reduce((s, d) => s + d.value, 0)
+  const totalPipelineValue = activeDeals.reduce((s, d) => s + (d.value ?? 0), 0)
+  const wonValue           = wonDeals.reduce((s, d) => s + (d.value ?? 0), 0)
+  const winRate            = deals.length > 0 ? Math.round(wonDeals.length / deals.length * 100) : 0
+
+  if (error) return (
+    <div className="page">
+      <div className="empty-state">
+        <AlertCircle size={28} />
+        <strong>Gagal memuat data CRM</strong>
+        <p>{error}</p>
+        <button className="btn-primary" onClick={refetch}><RefreshCw size={14} /> Coba Lagi</button>
+      </div>
+    </div>
+  )
 
   return (
     <div className="page">
@@ -120,6 +133,7 @@ export default function CRM() {
           <p>Kelola kontak pelanggan dan pantau pipeline penjualan</p>
         </div>
         <div className="page-actions">
+          <button className="btn-secondary" onClick={refetch}><RefreshCw size={14} /></button>
           <div className="crm-view-toggle">
             <button className={view === 'pipeline' ? 'active' : ''} onClick={() => setView('pipeline')}>
               <Target size={14} /> Pipeline
@@ -136,33 +150,38 @@ export default function CRM() {
       <div className="kpi-grid">
         <div className="kpi glass">
           <div className="kpi-label">Total Kontak</div>
-          <div className="kpi-value">{crmContacts.length}</div>
-          <div className="kpi-meta up">+3 bulan ini</div>
+          <div className="kpi-value">{loading ? '—' : contacts.length}</div>
+          <div className="kpi-meta">{activeDeals.length} deal aktif</div>
         </div>
         <div className="kpi glass">
           <div className="kpi-label">Pipeline Aktif</div>
-          <div className="kpi-value">{formatRupiah(totalPipelineValue)}</div>
-          <div className="kpi-meta">{crmDeals.filter(d => d.stage !== 'won').length} deal aktif</div>
+          <div className="kpi-value">{loading ? '—' : formatCompact(totalPipelineValue)}</div>
+          <div className="kpi-meta">{activeDeals.length} deal terbuka</div>
         </div>
         <div className="kpi glass">
           <div className="kpi-label">Won Bulan Ini</div>
-          <div className="kpi-value" style={{ color: '#10b981' }}>{formatRupiah(wonValue)}</div>
-          <div className="kpi-meta up">+{crmDeals.filter(d => d.stage === 'won').length} deal closed</div>
+          <div className="kpi-value" style={{ color: '#10b981' }}>{loading ? '—' : formatCompact(wonValue)}</div>
+          <div className="kpi-meta up">+{wonDeals.length} deal closed</div>
         </div>
         <div className="kpi glass">
           <div className="kpi-label">Win Rate</div>
-          <div className="kpi-value">68%</div>
-          <div className="kpi-meta up">+5% vs bulan lalu</div>
+          <div className="kpi-value">{loading ? '—' : `${winRate}%`}</div>
+          <div className="kpi-meta">{deals.length} total deal</div>
         </div>
       </div>
 
-      {view === 'pipeline' ? (
+      {loading ? (
+        <div className="empty-state" style={{ padding: '64px' }}>
+          <div className="spinner" />
+          <span>Memuat data CRM…</span>
+        </div>
+      ) : view === 'pipeline' ? (
         /* ── Pipeline Kanban ── */
         <div className="crm-pipeline-wrap">
           <div className="crm-pipeline">
             {STAGES.map(stage => {
-              const stageDeals = crmDeals.filter(d => d.stage === stage.key)
-              const stageValue = stageDeals.reduce((s, d) => s + d.value, 0)
+              const stageDeals = deals.filter(d => d.stage === stage.key)
+              const stageValue = stageDeals.reduce((s, d) => s + (d.value ?? 0), 0)
               return (
                 <div key={stage.key} className="crm-stage-col">
                   <div className="crm-stage-header">
@@ -171,11 +190,15 @@ export default function CRM() {
                       <div className="crm-stage-label">{stage.label}</div>
                       <div className="crm-stage-sub">{stage.desc}</div>
                     </div>
-                    <div className="crm-stage-val">{formatRupiah(stageValue)}</div>
+                    <div className="crm-stage-val">{formatCompact(stageValue)}</div>
                   </div>
                   <div className="crm-stage-count">{stageDeals.length} deal</div>
                   <div className="crm-stage-cards">
-                    {stageDeals.map(deal => <DealCard key={deal.id} deal={deal} />)}
+                    {stageDeals.length === 0 ? (
+                      <div className="crm-stage-empty">Belum ada deal</div>
+                    ) : (
+                      stageDeals.map(deal => <DealCard key={deal.id} deal={deal} />)
+                    )}
                     <button className="crm-add-deal">
                       <Plus size={13} /> Tambah deal
                     </button>
@@ -191,28 +214,36 @@ export default function CRM() {
           {/* Contact list */}
           <div className="section-card glass crm-contacts-panel">
             <div className="crm-list-header">
-              <div className="section-title">Semua Kontak</div>
+              <div className="section-title">Semua Kontak ({contacts.length})</div>
               <div className="crm-search">
                 <Search size={13} />
                 <input placeholder="Cari nama, telepon…" value={search} onChange={e => setSearch(e.target.value)} />
               </div>
             </div>
-            <div className="crm-contact-list">
-              {filteredContacts.map(c => (
-                <ContactCard
-                  key={c.id}
-                  c={c}
-                  selected={selectedContact?.id === c.id}
-                  onSelect={() => setSelectedContact(c)}
-                />
-              ))}
-            </div>
+            {filteredContacts.length === 0 ? (
+              <div className="empty-state" style={{ padding: '40px 24px' }}>
+                <UserPlus size={28} />
+                <strong>{contacts.length === 0 ? 'Belum ada kontak' : 'Tidak ada hasil'}</strong>
+                <p>{contacts.length === 0 ? 'Tambah kontak pertama untuk mulai kelola pelanggan.' : 'Coba ubah kata kunci pencarian.'}</p>
+              </div>
+            ) : (
+              <div className="crm-contact-list">
+                {filteredContacts.map(c => (
+                  <ContactCard
+                    key={c.id}
+                    c={c}
+                    selected={selectedContact?.id === c.id}
+                    onSelect={() => setSelectedContact(c)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Contact detail */}
           <div className="section-card glass crm-detail-panel">
             {selectedContact ? (
-              <ContactDetail contact={selectedContact} />
+              <ContactDetail contact={selectedContact} deals={deals} />
             ) : (
               <div className="crm-detail-empty">
                 <Users size={32} opacity={0.3} />
@@ -226,15 +257,17 @@ export default function CRM() {
   )
 }
 
-function ContactDetail({ contact: c }) {
-  const src = SOURCE[c.source] || { label: c.source, color: '#6366f1' }
-  const deals = crmDeals.filter(d => d.contact === c.name)
+function ContactDetail({ contact: c, deals: allDeals }) {
+  const src = SOURCE[c.source] || { label: c.source || '—', color: '#6366f1' }
+  const deals = (allDeals || []).filter(d =>
+    d.contact_id === c.id || d.contact_name === c.name || d.contact === c.name
+  )
 
   return (
     <div className="crm-detail">
       {/* Header */}
       <div className="crm-detail-header">
-        <div className="crm-detail-avatar">{c.avatar}</div>
+        <div className="crm-detail-avatar">{c.avatar || c.name?.[0] || '?'}</div>
         <div>
           <div className="crm-detail-name">{c.name}</div>
           <div className="crm-detail-src" style={{ color: src.color }}>{src.label}</div>
@@ -249,16 +282,16 @@ function ContactDetail({ contact: c }) {
       {/* Stats */}
       <div className="crm-detail-stats">
         <div className="crm-d-stat">
-          <div className="crm-d-stat-val">{c.orders}</div>
+          <div className="crm-d-stat-val">{c.orders ?? 0}</div>
           <div className="crm-d-stat-label">Total Order</div>
         </div>
         <div className="crm-d-stat">
-          <div className="crm-d-stat-val">{formatRupiah(c.totalSpend)}</div>
+          <div className="crm-d-stat-val">{formatCompact(c.total_spend ?? c.totalSpend ?? 0)}</div>
           <div className="crm-d-stat-label">Total Belanja</div>
         </div>
         <div className="crm-d-stat">
           <div className="crm-d-stat-val" style={{ color: STAGES.find(s => s.key === c.stage)?.color }}>
-            {STAGES.find(s => s.key === c.stage)?.label}
+            {STAGES.find(s => s.key === c.stage)?.label || '—'}
           </div>
           <div className="crm-d-stat-label">Stage</div>
         </div>
@@ -266,14 +299,17 @@ function ContactDetail({ contact: c }) {
 
       {/* Info */}
       <div className="crm-detail-info">
-        <div className="crm-info-row"><Phone size={13} /><span>{c.phone}</span></div>
-        <div className="crm-info-row"><Mail size={13} /><span>{c.email}</span></div>
-        <div className="crm-info-row"><Globe size={13} /><span>Terakhir kontak: {c.lastContact}</span></div>
+        <div className="crm-info-row"><Phone size={13} /><span>{c.phone || '—'}</span></div>
+        <div className="crm-info-row"><Mail size={13} /><span>{c.email || '—'}</span></div>
+        <div className="crm-info-row">
+          <Globe size={13} />
+          <span>Terakhir kontak: {c.last_contact || c.lastContact || '—'}</span>
+        </div>
       </div>
 
       {/* Tags */}
       <div className="crm-detail-tags">
-        {c.tags.map(tag => {
+        {(c.tags || []).map(tag => {
           const tc = TAG_COLOR[tag] || { bg: '#6366f118', color: '#818cf8' }
           return <span key={tag} className="crm-tag" style={{ background: tc.bg, color: tc.color }}>{tag}</span>
         })}
@@ -287,11 +323,11 @@ function ContactDetail({ contact: c }) {
             <div key={deal.id} className="crm-detail-deal-item">
               <div className="crm-ddeal-info">
                 <div className="crm-ddeal-title">{deal.title}</div>
-                <div className="crm-ddeal-val">{formatRupiah(deal.value)}</div>
+                <div className="crm-ddeal-val">{formatCompact(deal.value)}</div>
               </div>
               <div className="crm-ddeal-stage" style={{
-                color: STAGES.find(s => s.key === deal.stage)?.color,
-                background: STAGES.find(s => s.key === deal.stage)?.color + '18',
+                color:      STAGES.find(s => s.key === deal.stage)?.color,
+                background: (STAGES.find(s => s.key === deal.stage)?.color ?? '#6366f1') + '18',
               }}>
                 {STAGES.find(s => s.key === deal.stage)?.label}
               </div>
