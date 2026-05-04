@@ -15,6 +15,7 @@ import Welcome from './pages/Welcome.jsx'
 import Orders from './pages/Orders.jsx'
 import CRM from './pages/CRM.jsx'
 import Inventory from './pages/Inventory.jsx'
+import SEO from './pages/SEO.jsx'
 import { useApp } from './context/AppContext.jsx'
 
 const Spinner = () => (
@@ -78,6 +79,7 @@ export default function App() {
       }>
         <Route path="/"          element={<Dashboard />} />
         <Route path="/website"   element={<Website />} />
+        <Route path="/seo"       element={<SEO />} />
         <Route path="/ecommerce" element={<Ecommerce />} />
         <Route path="/social"    element={<Social />} />
         <Route path="/chat"      element={<Chat />} />

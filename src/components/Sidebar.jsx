@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Globe, ShoppingBag, Share2, MessageSquare,
   CreditCard, Wallet, Sparkles, Settings, X,
-  ClipboardList, Users, Package2,
+  ClipboardList, Users, Package2, SearchCheck,
 } from 'lucide-react'
 import { useApp } from '../context/AppContext.jsx'
 import { getInitials } from '../utils/string.js'
@@ -26,9 +26,10 @@ export default function Sidebar({ open, onClose }) {
   ]
 
   const growthItems = [
-    { path: '/website', icon: Globe,          label: t.nav.website, badge: null },
-    { path: '/social',  icon: Share2,         label: t.nav.social,  badge: null },
-    { path: '/studio',  icon: Sparkles,       label: t.nav.studio,  badge: 'AI' },
+    { path: '/website', icon: Globe,        label: t.nav.website, badge: null  },
+    { path: '/seo',     icon: SearchCheck,  label: 'SEO',         badge: null  },
+    { path: '/social',  icon: Share2,       label: t.nav.social,  badge: null  },
+    { path: '/studio',  icon: Sparkles,     label: t.nav.studio,  badge: 'AI'  },
   ]
 
   const crmItems = [
