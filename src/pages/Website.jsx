@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import {
   Globe, Plus, Eye, MousePointer, Zap, ExternalLink,
   Edit3, BarChart3, Search, Sparkles, ArrowRight,
-  CheckCircle2, Layout, ShoppingBag, MessageSquare
+  CheckCircle2, Layout, ShoppingBag, MessageSquare,
+  Link2, Save, Unlink,
 } from 'lucide-react'
 import { AreaChart, Area, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts'
 import { websitePages, websiteAnalytics } from '../data/mockData.js'
@@ -11,6 +12,91 @@ import { useApp } from '../context/AppContext.jsx'
 import { supabase } from '../lib/supabase.js'
 import './shared.css'
 import './Website.css'
+
+/* ── Connect External Website card ── */
+function ConnectWebsiteCard({ profile, onSaved }) {
+  const existingUrl = profile?.existing_website_url || ''
+  const [editing, setEditing] = useState(!existingUrl)
+  const [url, setUrl]         = useState(existingUrl)
+  const [saving, setSaving]   = useState(false)
+  const [saved,  setSaved]    = useState(false)
+
+  const handleSave = async () => {
+    if (!url.trim()) return
+    setSaving(true)
+    const clean = url.trim().startsWith('http') ? url.trim() : `https://${url.trim()}`
+    await supabase.from('profiles').update({ existing_website_url: clean }).eq('id', profile.id)
+    setSaving(false)
+    setSaved(true)
+    setEditing(false)
+    setUrl(clean)
+    onSaved?.(clean)
+    setTimeout(() => setSaved(false), 3000)
+  }
+
+  const handleDisconnect = async () => {
+    await supabase.from('profiles').update({ existing_website_url: '' }).eq('id', profile.id)
+    setUrl('')
+    setEditing(true)
+    onSaved?.('')
+  }
+
+  const isConnected = !editing && url
+
+  return (
+    <div className="connect-website-card glass">
+      <div className="cwc-left">
+        <div className={`cwc-icon ${isConnected ? 'connected' : ''}`}>
+          <Link2 size={18} />
+        </div>
+        <div>
+          <div className="cwc-title">
+            {isConnected ? 'Website Terhubung' : 'Hubungkan Website Kamu'}
+          </div>
+          <div className="cwc-sub">
+            {isConnected
+              ? 'Dashboard terhubung ke website eksternal kamu'
+              : 'Punya website sendiri? Hubungkan di sini untuk pantau & kelola dari dashboard'}
+          </div>
+        </div>
+      </div>
+
+      <div className="cwc-right">
+        {isConnected ? (
+          <>
+            <a href={url} target="_blank" rel="noopener noreferrer" className="cwc-url-display">
+              <Globe size={13} />
+              <span>{url.replace(/^https?:\/\//, '')}</span>
+              <ExternalLink size={11} />
+            </a>
+            <button className="btn-secondary cwc-btn" onClick={() => setEditing(true)}>
+              <Edit3 size={13} /> Ganti
+            </button>
+            <button className="cwc-disconnect" onClick={handleDisconnect} title="Putuskan">
+              <Unlink size={13} />
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="cwc-input-wrap">
+              <Globe size={13} />
+              <input
+                className="cwc-input"
+                placeholder="https://website-kamu.com"
+                value={url}
+                onChange={e => setUrl(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleSave()}
+              />
+            </div>
+            <button className="btn-primary cwc-btn" onClick={handleSave} disabled={saving || !url.trim()}>
+              {saving ? 'Menyimpan…' : saved ? <><CheckCircle2 size={13} /> Tersimpan</> : <><Save size={13} /> Hubungkan</>}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
 
 /* ── Onboarding wizard for new users ─────────────────────────── */
 function OnboardingSetup() {
@@ -191,7 +277,7 @@ function OnboardingSetup() {
 
 /* ── Main Website page ───────────────────────────────────────── */
 export default function Website() {
-  const { t, theme, profile } = useApp()
+  const { t, theme, profile, fetchProfile, user } = useApp()
   const w = t.website
 
   const tooltipStyle = {
@@ -222,6 +308,11 @@ export default function Website() {
           <button className="btn-primary"><Plus size={14} /> {w.newPage}</button>
         </div>
       </div>
+
+      <ConnectWebsiteCard
+        profile={profile}
+        onSaved={() => fetchProfile(user.id)}
+      />
 
       <div className="website-hero glass">
         <div className="website-hero-info">
