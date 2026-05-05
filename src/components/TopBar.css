@@ -215,6 +215,19 @@
   border: 2px solid var(--bg-primary);
 }
 
+/* Help button */
+.topbar-help-btn {
+  color: var(--accent-primary);
+  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.07);
+}
+
+.topbar-help-btn:hover {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
 .signout-btn {
   color: var(--text-tertiary);
   transition: color 0.2s, border-color 0.2s;

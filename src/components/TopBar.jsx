@@ -1,11 +1,11 @@
-import { Search, Bell, Wallet as WalletIcon, Plus, Sun, Moon, LogOut, Menu } from 'lucide-react'
+import { Search, Bell, Wallet as WalletIcon, Plus, Sun, Moon, LogOut, Menu, HelpCircle } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useApp } from '../context/AppContext.jsx'
 import { formatRupiah } from '../utils/currency.js'
 import { getInitials } from '../utils/string.js'
 import './TopBar.css'
 
-export default function TopBar({ onMenuClick }) {
+export default function TopBar({ onMenuClick, onHelpClick }) {
   const { theme, toggleTheme, lang, toggleLang, t, profile, signOut } = useApp()
 
   const walletBalance = profile?.wallet_balance ?? 0
@@ -50,6 +50,11 @@ export default function TopBar({ onMenuClick }) {
             <Plus size={14} />
           </button>
         </Link>
+
+        {/* Help */}
+        <button className="topbar-icon-btn topbar-help-btn" onClick={onHelpClick} title={lang === 'id' ? 'Panduan' : 'Help guide'}>
+          <HelpCircle size={18} />
+        </button>
 
         {/* Notifications */}
         <button className="topbar-icon-btn">
