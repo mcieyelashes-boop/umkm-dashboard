@@ -79,15 +79,17 @@ export default function Dashboard() {
           const Icon = iconMap[stat.icon]
           return (
             <div key={idx} className="stat-card glass">
-              <div className={`stat-icon stat-icon-${idx}`}>
-                <Icon size={20} />
-              </div>
-              <div className="stat-content">
-                <div className="stat-label">{stat.label}</div>
-                <div className="stat-value">{stat.value}</div>
-                <div className="stat-change neutral">
-                  <Minus size={12} />
-                  {stat.change} <span>{d.vsLastMonth}</span>
+              <div className="stat-top">
+                <div className="stat-content">
+                  <div className="stat-label">{stat.label}</div>
+                  <div className="stat-value">{stat.value}</div>
+                  <div className="stat-change neutral">
+                    <Minus size={11} />
+                    {stat.change}
+                  </div>
+                </div>
+                <div className={`stat-icon stat-icon-${idx}`}>
+                  <Icon size={20} />
                 </div>
               </div>
             </div>

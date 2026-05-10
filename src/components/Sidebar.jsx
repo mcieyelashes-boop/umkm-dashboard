@@ -45,7 +45,9 @@ export default function Sidebar({ open, onClose }) {
       className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}
       onClick={onClose}
     >
-      <item.icon size={17} />
+      <div className="nav-icon-wrap">
+        <item.icon size={16} />
+      </div>
       <span className="nav-label">{item.label}</span>
       {item.badge && (
         <span className={`nav-badge ${item.badge === 'AI' ? 'ai' : ''}`}>
