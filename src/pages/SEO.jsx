@@ -77,15 +77,15 @@ const ISSUES = [
 ]
 
 const KEYWORDS = [
-  { keyword: 'bulu mata', position: 4,  volume: 12400, change: 2  },
-  { keyword: 'eyelash extension jakarta', position: 7,  volume: 3200,  change: -1 },
-  { keyword: 'jasa pasang bulu mata', position: 12, volume: 1800,  change: 3  },
-  { keyword: 'eyelash murah', position: 18, volume: 5400,  change: 0  },
-  { keyword: 'bulu mata natural', position: 23, volume: 2100,  change: 5  },
+  { keyword: 'toko online jakarta',        position: 4,  volume: 12400, change: 2  },
+  { keyword: 'produk lokal berkualitas',   position: 7,  volume: 3200,  change: -1 },
+  { keyword: 'jual produk umkm',          position: 12, volume: 1800,  change: 3  },
+  { keyword: 'grosir murah jakarta',       position: 18, volume: 5400,  change: 0  },
+  { keyword: 'produk handmade indonesia',  position: 23, volume: 2100,  change: 5  },
 ]
 
 export default function SEO() {
-  const [url, setUrl] = useState('https://mci-eyelashes.site')
+  const [url, setUrl] = useState('https://toko-saya.com')
   const [tab, setTab] = useState('overview') // overview | keywords | issues
 
   return (

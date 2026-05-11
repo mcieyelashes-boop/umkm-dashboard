@@ -89,7 +89,7 @@ const SECTIONS = [
     color: '#7c3aed',
     desc: 'Kelola & hubungkan website bisnis',
     steps: [
-      { title: 'Hubungkan website kamu', desc: 'Di bagian atas halaman, masukkan URL website kamu (contoh: https://mci-eyelashes.site) lalu klik "Hubungkan".' },
+      { title: 'Hubungkan website kamu', desc: 'Di bagian atas halaman, masukkan URL website kamu (contoh: https://toko-saya.com) lalu klik "Hubungkan".' },
       { title: 'Pantau performa website', desc: 'Lihat statistik pengunjung, bounce rate, dan konversi dari website yang sudah terhubung.' },
       { title: 'Kelola halaman', desc: 'Tabel di bawah menampilkan daftar halaman website beserta status, pengunjung, dan skor SEO per halaman.' },
       { title: 'Buat landing page baru', desc: 'Klik "Halaman Baru" untuk membuat halaman produk atau promo baru dengan editor bawaan.' },

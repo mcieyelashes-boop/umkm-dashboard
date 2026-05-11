@@ -68,14 +68,14 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 9px 16px;
   background: var(--bg-input);
   border: 1px solid var(--border);
   border-radius: 10px;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
-  transition: all 0.15s;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
 }
 
 .studio-tab:hover {
@@ -119,17 +119,20 @@
   padding: 12px 14px;
   background: var(--bg-input);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 13px;
   resize: vertical;
   color: var(--text-primary);
   font-family: inherit;
-  transition: all 0.15s;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+  line-height: 1.6;
 }
 
 .form-textarea:focus {
   border-color: var(--accent-primary);
   background: var(--bg-input-strong);
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+  outline: none;
 }
 
 .pill-group {

@@ -131,25 +131,27 @@
   font-size: 13px;
 }
 .ord-table th {
-  padding: 10px 14px;
+  padding: 11px 14px;
   text-align: left;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-tertiary);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.07em;
   white-space: nowrap;
   border-bottom: 1px solid var(--border);
+  background: rgba(99,102,241,0.04);
 }
 .ord-table td {
-  padding: 12px 14px;
+  padding: 13px 14px;
   border-bottom: 1px solid var(--border);
   vertical-align: middle;
   color: var(--text-primary);
 }
 .ord-table tr:last-child td { border-bottom: none; }
-.ord-table tr.selected td { background: rgba(124, 58, 237, 0.04); }
-.ord-table tr:hover td { background: var(--bg-hover); }
+.ord-table tr.selected td { background: rgba(124, 58, 237, 0.06); }
+.ord-table tbody tr { transition: background 0.15s; }
+.ord-table tbody tr:hover td { background: rgba(99,102,241,0.05); }
 .ord-table input[type="checkbox"] { cursor: pointer; accent-color: var(--accent-primary); }
 
 /* Cells */

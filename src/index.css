@@ -31,6 +31,7 @@
   /* Aliases */
   --accent:      #7c3aed;
   --accent-blue: #2563eb;
+  --bg-hover:    rgba(99, 102, 241, 0.05);
 
   /* Surface tokens — flip in light mode */
   --bg-input:        rgba(11, 16, 32, 0.55);

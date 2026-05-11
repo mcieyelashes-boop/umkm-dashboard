@@ -82,25 +82,42 @@
 }
 
 .kpi {
-  padding: 18px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
 }
+
+.kpi::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.kpi:hover { transform: translateY(-3px); }
+.kpi:hover::before { opacity: 1; }
 
 .kpi-label {
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--text-tertiary);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .kpi-value {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 28px;
+  font-weight: 800;
   font-family: 'Space Grotesk', sans-serif;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
 .kpi-meta {
@@ -109,13 +126,14 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  margin-top: 2px;
 }
 
 .kpi-meta.up { color: var(--accent-emerald); }
 .kpi-meta.down { color: var(--accent-red); }
 
 .section-card {
-  padding: 22px;
+  padding: 24px;
 }
 
 .section-header {
@@ -400,6 +418,62 @@
 .modal-ch-btn.active {
   border-color: currentColor;
 }
+
+/* ─── Shared table styles ─── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.data-table th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(99,102,241,0.04);
+}
+
+.data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.data-table tr:last-child td { border-bottom: none; }
+
+.data-table tbody tr {
+  transition: background 0.15s;
+}
+
+.data-table tbody tr:hover {
+  background: rgba(99,102,241,0.04);
+}
+
+/* ─── Progress bar shared ─── */
+.progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  min-width: 80px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: var(--gradient-primary);
+  transition: width 0.6s ease;
+}
+
+.progress-fill.emerald { background: linear-gradient(90deg, #059669, #10b981); }
+.progress-fill.amber   { background: linear-gradient(90deg, #d97706, #f59e0b); }
+.progress-fill.red     { background: linear-gradient(90deg, #dc2626, #ef4444); }
 
 /* Spinner (shared) */
 .spinner {

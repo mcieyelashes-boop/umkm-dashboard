@@ -53,22 +53,24 @@
 .inv-supplier  { font-size: 11.5px; color: var(--text-secondary); max-width: 140px; }
 
 /* Stock cell */
-.inv-stock-cell { display: flex; flex-direction: column; gap: 4px; min-width: 70px; }
+.inv-stock-cell { display: flex; flex-direction: column; gap: 5px; min-width: 70px; }
 .inv-stock-num {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 15px;
+  font-weight: 800;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 .inv-stock-num.low  { color: #f59e0b; }
 .inv-stock-num.out  { color: #ef4444; }
 .inv-stock-bar-wrap {
-  height: 3px;
-  background: var(--bg-input);
-  border-radius: 3px;
+  height: 4px;
+  background: rgba(99,102,241,0.12);
+  border-radius: 4px;
   overflow: hidden;
-  width: 60px;
+  width: 64px;
 }
-.inv-stock-bar { height: 100%; border-radius: 3px; transition: width 0.4s; }
+.inv-stock-bar { height: 100%; border-radius: 4px; transition: width 0.5s cubic-bezier(0.34,1.56,0.64,1); }
 
 /* Channel dots */
 .inv-channels { display: flex; gap: 4px; align-items: center; }
